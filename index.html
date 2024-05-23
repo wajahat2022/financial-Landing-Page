@@ -1,0 +1,5799 @@
+<html>
+  <head>
+    <style type="text/css">
+      .turbo-progress-bar {
+        position: fixed;
+        display: block;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: #0076ff;
+        z-index: 9999;
+        transition: width 300ms ease-out, opacity 150ms 150ms ease-in;
+        transform: translate3d(0, 0, 0);
+      }
+    </style>
+    <style id="st_globalStyles">
+      /* MEDIA QUERIES */
+      .anima-desktop-only {
+        @media (max-width: 768px) {
+          display: none !important;
+        }
+      }
+
+      /* SCROLLBAR */
+
+      [dark-scroll]::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      [dark-scroll]::-webkit-scrollbar-track-piece {
+        background-color: #2b2b2b;
+        border: 1px solid #1d1d1d;
+      }
+
+      [dark-scroll]::-webkit-scrollbar-thumb {
+        height: 10px;
+        background-color: #4d4d4d;
+      }
+      [dark-scroll]::-webkit-scrollbar-thumb:hover {
+        background-color: #5a5a5a;
+      }
+
+      /* LOAD PROGRESS */
+
+      .turbolinks-progress-bar {
+        height: 3px;
+        background-color: #ff6250;
+      }
+
+      /* GROUPING */
+
+      [data-id].ui-selecting {
+        box-shadow: inset 0 0 0 1px #4285f4 !important;
+      }
+      [data-id].ui-selected {
+        box-shadow: inset 0 0 0 1px #4285f4 !important;
+      }
+
+      /* CURSOR */
+
+      body[mode="comments"] * {
+        cursor: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkxNjQ4IDIzLjQxMDlDNS40OTE1MyAyMi45ODg3IDUuOTMxNzkgMjIuMzkzNSA2LjIzMjggMjEuNjQwN0M0Ljc5MDY5IDE5LjczODMgNCAxNy4zOTMzIDQgMTQuOTk3NUM0IDguOTM0MSA4LjkzMjgyIDQgMTUuMDAyMiA0QzIxLjA3MTcgNCAyNiA4LjkzOTE5IDI2IDE1LjAwMjVDMjYgMjEuMDY1OSAyMS4wNjcyIDI2IDE0Ljk5NzggMjZDMTIuOTg5NiAyNiAxMS4wMzUzIDI1LjQ1NTcgOS4zMjM2NyAyNC40MjMxQzguNDI5NjUgMjQuOTU3MiA3LjQxNDM0IDI1LjIyNjggNi4zMDAxOCAyNS4yMjY4QzUuOTU0MjYgMjUuMjI2OCA1LjU5OTM1IDI1LjIwMTQgNS4yNTM0MiAyNS4xNDU0QzQuOTAzIDI1LjA4OTUgNC42Mjg5NiAyNC44MDQ2IDQuNTUyNTggMjQuNDE4QzQuNDc2MjEgMjQuMDI2NCA0LjYxOTk3IDIzLjYyOTYgNC45MTY0OCAyMy40MTA5WiIgZmlsbD0iI0ZGNjI1MCIvPgo8L3N2Zz4K")
+            0 24,
+          auto !important;
+      }
+
+      body[mode="code"] [data-id]:not(.hidden) {
+        cursor: default;
+      }
+
+      /* default node state */
+
+      body[mode="code"] [data-id]:not(.hidden),
+      body[mode="comments"] [data-id]:not(.hidden) {
+        pointer-events: all;
+      }
+
+      /* is_image */
+
+      body[mode="code"] [data-id].is_image [data-id],
+      body[mode="comments"] [data-id].is_image [data-id] {
+        pointer-events: none !important;
+      }
+
+      /* without a data-id or ignored */
+
+      [data-id].ignore,
+      body[mode="code"] *:not([data-id]) {
+        pointer-events: none !important;
+      }
+      /* disable transforms for ignored elements */
+
+      body[mode="code"] [data-id]:hover {
+        transform: none !important;
+      }
+
+      /* ANIMA BUTTONS */
+      .an-button {
+        position: relative;
+        height: 28px;
+        padding: 0 20px;
+        font-size: 14px;
+        border-radius: 4px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        vertical-align: middle;
+        white-space: nowrap;
+        transition-property: all;
+        transition-duration: 100ms;
+        appearance: none;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s ease;
+        border-width: 0;
+      }
+
+      .an-button > div {
+        width: 100%;
+      }
+
+      .an-button.primary {
+        background: #ff6250;
+        color: #ffffff;
+      }
+
+      .an-button.primary:hover:not(:disabled) {
+        background: #e2412e;
+      }
+
+      .an-button.secondary {
+        background: transparent;
+        border: 1px solid #ff6250;
+        color: #ff6250;
+      }
+
+      .an-button.secondary:hover:not(:disabled) {
+        color: #ffffff;
+        background: #ff6250;
+      }
+
+      .an-button.rounded {
+        border-radius: 100px;
+      }
+
+      .an-button:disabled {
+        opacity: 0.5;
+      }
+
+      .an-button:disabled {
+        cursor: default;
+      }
+
+      .an-button:active,
+      .an-button:focus {
+        outline: none;
+      }
+    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1440, maximum-scale=1.0" />
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="https://animaproject.s3.amazonaws.com/home/favicon.png"
+    />
+    <meta name="og:type" content="website" />
+    <meta name="twitter:card" content="photo" />
+
+    <style id="hotspots-styles">
+      .hotspot {
+        position: absolute;
+        border: 1px solid #2a9fd8;
+        background: rgba(0, 173, 255, 0.54);
+        opacity: 0;
+        z-index: -1;
+        pointer-events: none;
+      }
+    </style>
+
+    <style>
+      @import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+
+      @import url("https://fonts.googleapis.com/css?family=Inter:900,400,600italic,200,600,700italic,300,500,700");
+
+      /* The following line is used to measure usage of this code. You can remove it if you want. */
+      @import url("https://px.animaapp.com/664c7a94e5fc3b794779cef5.664c7a94e5fc3b794779cef8.7qFTZqA.hch.png");
+
+      .screen textarea:focus,
+      .screen input:focus {
+        outline: none;
+      }
+
+      .screen * {
+        -webkit-font-smoothing: antialiased;
+        box-sizing: border-box;
+      }
+
+      .screen div {
+        -webkit-text-size-adjust: none;
+      }
+
+      .component-wrapper a {
+        display: contents;
+        pointer-events: auto;
+        text-decoration: none;
+      }
+
+      .component-wrapper * {
+        -webkit-font-smoothing: antialiased;
+        box-sizing: border-box;
+        pointer-events: none;
+      }
+
+      .component-wrapper a *,
+      .component-wrapper input,
+      .component-wrapper video,
+      .component-wrapper iframe {
+        pointer-events: auto;
+      }
+
+      .component-wrapper.not-ready,
+      .component-wrapper.not-ready * {
+        visibility: hidden !important;
+      }
+
+      .screen a {
+        display: contents;
+        text-decoration: none;
+      }
+
+      .full-width-a {
+        width: 100%;
+      }
+
+      .full-height-a {
+        height: 100%;
+      }
+
+      .container-center-vertical {
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .container-center-vertical > * {
+        flex-shrink: 0;
+        pointer-events: auto;
+      }
+
+      .container-center-horizontal {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        pointer-events: none;
+        width: 100%;
+      }
+
+      .container-center-horizontal > * {
+        flex-shrink: 0;
+        pointer-events: auto;
+      }
+
+      .auto-animated div {
+        --z-index: -1;
+        opacity: 0;
+        position: absolute;
+      }
+
+      .auto-animated input {
+        --z-index: -1;
+        opacity: 0;
+        position: absolute;
+      }
+
+      .auto-animated .container-center-vertical,
+      .auto-animated .container-center-horizontal {
+        opacity: 1;
+      }
+
+      .overlay-base {
+        display: none;
+        height: 100%;
+        opacity: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+      }
+
+      .overlay-base.animate-appear {
+        align-items: center;
+        animation: reveal 0.3s ease-in-out 1 normal forwards;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        opacity: 0;
+      }
+
+      .overlay-base.animate-disappear {
+        animation: reveal 0.3s ease-in-out 1 reverse forwards;
+        display: block;
+        opacity: 1;
+        pointer-events: none;
+      }
+
+      .overlay-base.animate-disappear * {
+        pointer-events: none;
+      }
+
+      @keyframes reveal {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .animate-nodelay {
+        animation-delay: 0s;
+      }
+
+      .align-self-flex-start {
+        align-self: flex-start;
+      }
+
+      .align-self-flex-end {
+        align-self: flex-end;
+      }
+
+      .align-self-flex-center {
+        align-self: flex-center;
+      }
+
+      .valign-text-middle {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .valign-text-bottom {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      input:focus {
+        outline: none;
+      }
+
+      .listeners-active,
+      .listeners-active * {
+        pointer-events: auto;
+      }
+
+      .hidden,
+      .hidden * {
+        pointer-events: none;
+        visibility: hidden;
+      }
+
+      .smart-layers-pointers,
+      .smart-layers-pointers * {
+        pointer-events: auto;
+        visibility: visible;
+      }
+
+      .listeners-active-click,
+      .listeners-active-click * {
+        cursor: pointer;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      :root {
+        --black: #000000;
+        --black-2: #00000045;
+        --cultured-pearl: #f5f5f5;
+        --golden-tainoi: #ffca5d;
+        --pomegranate: #ed4f1d;
+        --shark: #2a2a2a;
+        --white: #ffffff;
+        --white-2: #ffffff1a;
+        --white-3: #ffffff33;
+        --woodsmoke: #0a0a12;
+
+        --font-size-l: 16px;
+        --font-size-m: 15px;
+        --font-size-s: 11px;
+        --font-size-xl: 20px;
+        --font-size-xs: 10px;
+        --font-size-xxl: 24px;
+        --font-size-xxxl: 32px;
+
+        --font-family-inter: "Inter", Helvetica;
+      }
+      .inter-semi-bold-white-15px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-m);
+        font-style: italic;
+        font-weight: 600;
+      }
+
+      .inter-light-white-15px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-m);
+        font-style: normal;
+        font-weight: 300;
+      }
+
+      .inter-light-white-10px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xs);
+        font-style: normal;
+        font-weight: 300;
+      }
+
+      .inter-semi-bold-white-32px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xxxl);
+        font-style: normal;
+        font-weight: 600;
+      }
+
+      .inter-black-white-20px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xl);
+        font-style: normal;
+        font-weight: 900;
+      }
+
+      .inter-black-white-16px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-l);
+        font-style: normal;
+        font-weight: 900;
+      }
+
+      .inter-black-white-32px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xxxl);
+        font-style: normal;
+        font-weight: 900;
+      }
+
+      .inter-black-white-10px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xs);
+        font-style: normal;
+        font-weight: 900;
+      }
+
+      .inter-black-white-48px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: 48px;
+        font-style: normal;
+        font-weight: 900;
+      }
+
+      .inter-black-white-24px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xxl);
+        font-style: normal;
+        font-weight: 900;
+      }
+
+      .inter-black-white-36px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: 36px;
+        font-style: normal;
+        font-weight: 900;
+      }
+
+      .inter-semi-bold-white-15px-2 {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-m);
+        font-style: normal;
+        font-weight: 600;
+      }
+
+      .inter-black-black-16px {
+        color: var(--black);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-l);
+        font-style: normal;
+        font-weight: 900;
+      }
+
+      .inter-semi-bold-white-32px-2 {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xxxl);
+        font-style: italic;
+        font-weight: 600;
+      }
+
+      .inter-semi-bold-white-11px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-s);
+        font-style: italic;
+        font-weight: 600;
+      }
+
+      .inter-black-white-64px {
+        font-family: var(--font-family-inter);
+        font-size: 64px;
+        font-style: normal;
+        font-weight: 900;
+      }
+
+      .inter-medium-white-15px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-m);
+        font-style: normal;
+        font-weight: 500;
+      }
+
+      .inter-bold-white-36px {
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: 36px;
+        font-style: italic;
+        font-weight: 700;
+      }
+
+      :root {
+      }
+
+      /* screen - desktop-1 */
+
+      .desktop-1 {
+        background-color: var(--black);
+        height: 9216px;
+        overflow: visible;
+        overflow-x: visible;
+        position: relative;
+        width: 1440px;
+      }
+
+      .desktop-1 .frame-1-Ys8k0x {
+        background-color: transparent;
+        height: 9216px;
+        left: -101px;
+        overflow: visible;
+        position: absolute;
+        top: 0px;
+        width: 1541px;
+      }
+
+      .desktop-1 .ellipse-2-tcZojf {
+        background: linear-gradient(
+          180deg,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 0%,
+          rgb(235.0000011920929, 177.0000046491623, 55.00000052154064) 100%
+        );
+        background-color: transparent;
+        border-radius: 306.5px/299px;
+        box-shadow: 0px 4px 234.8000030517578px 78px #ed4f1d70;
+        height: 598px;
+        left: -38px;
+        position: absolute;
+        top: 973px;
+        width: 613px;
+      }
+
+      .desktop-1 .ellipse-3-tcZojf {
+        background: linear-gradient(
+          180deg,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 0%,
+          rgb(235.0000011920929, 177.0000046491623, 55.00000052154064) 100%
+        );
+        background-color: transparent;
+        border-radius: 299.5px;
+        box-shadow: 0px 4px 234.8000030517578px 78px #ed4f1d70;
+        height: 599px;
+        left: 880px;
+        position: absolute;
+        top: 2759px;
+        width: 599px;
+      }
+
+      .desktop-1 .ellipse-4-tcZojf {
+        background: linear-gradient(
+          180deg,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 0%,
+          rgb(235.0000011920929, 177.0000046491623, 55.00000052154064) 100%
+        );
+        background-color: transparent;
+        border-radius: 299.5px;
+        box-shadow: 0px 4px 234.8000030517578px 78px #ed4f1d70;
+        height: 599px;
+        left: -199px;
+        position: absolute;
+        top: 3815px;
+        width: 599px;
+      }
+
+      .desktop-1 .ellipse-5-tcZojf {
+        background: linear-gradient(
+          180deg,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 0%,
+          rgb(235.0000011920929, 177.0000046491623, 55.00000052154064) 100%
+        );
+        background-color: transparent;
+        border-radius: 299.5px;
+        box-shadow: 0px 4px 234.8000030517578px 78px #ed4f1d70;
+        height: 599px;
+        left: 1179px;
+        position: absolute;
+        top: 6175px;
+        width: 599px;
+      }
+
+      .desktop-1 .ellipse-6-tcZojf {
+        background: linear-gradient(
+          180deg,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 0%,
+          rgb(235.0000011920929, 177.0000046491623, 55.00000052154064) 100%
+        );
+        background-color: transparent;
+        border-radius: 299.5px;
+        box-shadow: 0px 4px 234.8000030517578px 78px #ed4f1d70;
+        height: 599px;
+        left: 36px;
+        position: absolute;
+        top: 7530px;
+        width: 599px;
+      }
+
+      .desktop-1 .ellipse-1-Ys8k0x {
+        background: linear-gradient(
+          180deg,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 0%,
+          rgb(235.0000011920929, 177.0000046491623, 55.00000052154064) 100%
+        );
+        background-color: transparent;
+        border-radius: 250px;
+        box-shadow: 0px 4px 234.8000030517578px 78px #ed4f1d70;
+        height: 500px;
+        left: 844px;
+        position: absolute;
+        top: 190px;
+        width: 500px;
+      }
+
+      .desktop-1 .blister-Ys8k0x {
+        left: 87px;
+        top: 32px;
+      }
+
+      .desktop-1 .frame-1707482690-Ys8k0x {
+        gap: 115px;
+        left: 326px;
+        top: 28px;
+      }
+
+      .desktop-1 .ellipse-7-Ys8k0x {
+        background: linear-gradient(
+          180deg,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 0%,
+          rgb(255, 195.31505227088928, 69.77079212665558) 100%
+        );
+        border-radius: 44.8px;
+        height: 90px;
+        left: 188px;
+        top: 3027px;
+        transform: rotate(40.45deg);
+        width: 90px;
+      }
+
+      .desktop-1 .ellipse-8-Ys8k0x {
+        border-radius: 44.8px;
+        height: 90px;
+        left: 928px;
+        top: 3727px;
+        transform: rotate(40.45deg);
+        width: 90px;
+      }
+
+      .desktop-1 .people-have-always-b-Ys8k0x {
+        height: 90px;
+        left: 95px;
+        letter-spacing: 0px;
+        text-align: left;
+        top: 487px;
+        width: 406px;
+      }
+
+      .desktop-1 .people-have-always-b-V3rtYt {
+        height: 90px;
+        left: 827px;
+        letter-spacing: 0px;
+        text-align: left;
+        top: 1618px;
+        width: 406px;
+      }
+
+      .desktop-1 .people-have-always-b-InqUpZ {
+        height: 90px;
+        left: 125px;
+        letter-spacing: 0px;
+        text-align: left;
+        top: 2309px;
+        width: 406px;
+      }
+
+      .desktop-1 .people-have-always-b-EAe9Rz {
+        height: 90px;
+        left: 127px;
+        letter-spacing: 0px;
+        text-align: left;
+        top: 3212px;
+        width: 406px;
+      }
+
+      .desktop-1 .people-have-always-b-VeL0R0 {
+        height: 18px;
+        left: 827px;
+        letter-spacing: 2.7px;
+        text-align: left;
+        top: 1295px;
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .desktop-1 .people-have-always-Ys8k0x {
+        height: 18px;
+        left: 626px;
+        letter-spacing: 2.7px;
+        position: absolute;
+        top: 2844px;
+        width: auto;
+      }
+
+      .desktop-1 .investment-amont-Ys8k0x {
+        background-color: transparent;
+        height: 29px;
+        left: 125px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 2979px;
+        width: auto;
+      }
+
+      .desktop-1 .please-note-Ys8k0x {
+        background-color: transparent;
+        height: 29px;
+        left: 127px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 3174px;
+        width: auto;
+      }
+
+      .desktop-1 .investment-durstion-Ys8k0x {
+        background-color: transparent;
+        height: 29px;
+        left: 417px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 2979px;
+        width: auto;
+      }
+
+      .desktop-1 .people-have-always-b-WYxxqV {
+        height: 18px;
+        left: 120px;
+        letter-spacing: 2.7px;
+        text-align: left;
+        top: 2234px;
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .desktop-1 .in-nature-stacking-i-Ys8k0x {
+        height: 198px;
+        left: 827px;
+        text-align: left;
+        top: 1357px;
+        width: 406px;
+      }
+
+      .desktop-1 .building-the-future-Ys8k0x {
+        background-color: transparent;
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: 64px;
+        font-style: normal;
+        font-weight: 900;
+        height: auto;
+        left: 95px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 208px;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482691-Ys8k0x {
+        align-items: center;
+        background-color: transparent;
+        border: 3px solid;
+        border-color: transparent;
+        border-image: linear-gradient(
+            to bottom,
+            rgb(237.0000010728836, 79.00000289082527, 29.000000171363354),
+            rgb(235.0000011920929, 177.0000046491623, 55.00000052154064)
+          )
+          1;
+        border-radius: 8px;
+        display: flex;
+        gap: 10px;
+        height: 56px;
+        justify-content: center;
+        left: 95px;
+        padding: 10px;
+        position: absolute;
+        top: 626px;
+        width: 186px;
+      }
+
+      .desktop-1 .get-started-tAOFAC {
+        position: relative;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .frame-1707482701-Ys8k0x {
+        align-items: center;
+        background-color: transparent;
+        border: 3px solid;
+        border-color: transparent;
+        border-image: linear-gradient(
+            to bottom,
+            rgb(237.0000010728836, 79.00000289082527, 29.000000171363354),
+            rgb(235.0000011920929, 177.0000046491623, 55.00000052154064)
+          )
+          1;
+        border-radius: 8px;
+        display: flex;
+        gap: 10px;
+        height: 56px;
+        justify-content: center;
+        left: 827px;
+        padding: 10px;
+        position: absolute;
+        top: 1764px;
+        width: 186px;
+      }
+
+      .desktop-1 .frame-1707482713-Ys8k0x {
+        align-items: center;
+        background-color: transparent;
+        border: 3px solid;
+        border-color: transparent;
+        border-image: linear-gradient(
+            to bottom,
+            rgb(237.0000010728836, 79.00000289082527, 29.000000171363354),
+            rgb(235.0000011920929, 177.0000046491623, 55.00000052154064)
+          )
+          1;
+        border-radius: 8px;
+        display: flex;
+        gap: 10px;
+        height: 56px;
+        justify-content: center;
+        left: 929px;
+        padding: 10px;
+        position: absolute;
+        top: 4105px;
+        width: 186px;
+      }
+
+      .desktop-1 .frame-1707482692-Ys8k0x {
+        -webkit-backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        align-items: center;
+        backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        background-color: var(--white-3);
+        border: 1px solid;
+        border-color: var(--white);
+        border-radius: 38px;
+        display: flex;
+        gap: 10px;
+        height: 56px;
+        justify-content: center;
+        left: 696px;
+        padding: 10px;
+        position: absolute;
+        top: 348px;
+        width: 276px;
+      }
+
+      .desktop-1 .people-have-always-N8UImP {
+        letter-spacing: 0px;
+        position: relative;
+        transform: rotate(-1.22deg);
+        width: fit-content;
+      }
+
+      .desktop-1 .frame-1707482693-Ys8k0x {
+        -webkit-backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        align-items: center;
+        backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        background-color: var(--white-3);
+        border: 1px solid;
+        border-color: var(--white);
+        border-radius: 38px;
+        display: flex;
+        gap: 10px;
+        height: 56px;
+        justify-content: center;
+        left: 1165px;
+        padding: 10px;
+        position: absolute;
+        top: 522px;
+        width: 224px;
+      }
+
+      .desktop-1 .people-have-always-f9AdJq {
+        letter-spacing: 0px;
+        position: relative;
+        transform: rotate(-1.22deg);
+        width: fit-content;
+      }
+
+      .desktop-1 .frame-1707482694-Ys8k0x {
+        -webkit-backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        align-items: center;
+        backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        background-color: var(--white-3);
+        border: 1px solid;
+        border-color: var(--white);
+        border-radius: 38px;
+        display: flex;
+        gap: 10px;
+        height: 56px;
+        justify-content: center;
+        left: 1125px;
+        padding: 10px;
+        position: absolute;
+        top: 574px;
+        width: 298px;
+      }
+
+      .desktop-1 .kind-of-common-man-and-nature-phRDXa {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: relative;
+        text-align: left;
+        transform: rotate(-1.22deg);
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .the-roadmap-Ys8k0x {
+        background-color: transparent;
+        height: auto;
+        left: 583px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 915px;
+        width: auto;
+      }
+
+      .desktop-1 .profit-calculator-Ys8k0x {
+        background-color: transparent;
+        height: 42px;
+        left: 523px;
+        position: absolute;
+        top: 2785px;
+        width: 403px;
+      }
+
+      .desktop-1 .x100-Ys8k0x {
+        background-color: transparent;
+        height: auto;
+        left: 127px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 3042px;
+        width: auto;
+      }
+
+      .desktop-1 .get-started-Ys8k0x {
+        height: auto;
+        left: 988px;
+        position: absolute;
+        top: 3749px;
+        width: auto;
+      }
+
+      .desktop-1 .steps-to-get-started-Ys8k0x {
+        background-color: transparent;
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: 30px;
+        font-style: normal;
+        font-weight: 900;
+        height: auto;
+        left: 929px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 3864px;
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .desktop-1 .how-does-work-Ys8k0x {
+        background-color: transparent;
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: 30px;
+        font-style: normal;
+        font-weight: 200;
+        height: auto;
+        left: 929px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 3911px;
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .desktop-1 .x40-days-Ys8k0x {
+        background-color: transparent;
+        height: auto;
+        left: 437px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 3042px;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482695-Ys8k0x {
+        background-color: transparent;
+        height: 619px;
+        left: 116px;
+        position: absolute;
+        top: 1067px;
+        width: 181px;
+      }
+
+      .desktop-1 .frame-1707482696-Ys8k0x {
+        background-color: transparent;
+        height: 619px;
+        left: 317px;
+        position: absolute;
+        top: 1123px;
+        width: 181px;
+      }
+
+      .desktop-1 .frame-1707482697-Ys8k0x {
+        background-color: transparent;
+        height: 619px;
+        left: 517px;
+        position: absolute;
+        top: 1196px;
+        width: 181px;
+      }
+
+      .desktop-1 .brief-introduction-Ys8k0x {
+        left: 827px;
+        top: 1237px;
+      }
+
+      .desktop-1 .investment-offers-Ys8k0x {
+        background-color: transparent;
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xxxl);
+        font-style: normal;
+        font-weight: 700;
+        height: auto;
+        left: 120px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 2176px;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482705-Ys8k0x {
+        background-color: transparent;
+        height: 335px;
+        left: 1064px;
+        position: absolute;
+        top: 3059px;
+        width: 335px;
+      }
+
+      .desktop-1 .ellipse-7-hLsHo9 {
+        background: linear-gradient(
+          180deg,
+          rgb(255, 195.31505227088928, 69.77079212665558) 0%,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 100%
+        );
+        border-radius: 167.5px;
+        height: 335px;
+        left: 0px;
+        top: 0px;
+        width: 335px;
+      }
+
+      .desktop-1 .your-total-profit-hLsHo9 {
+        background-color: transparent;
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xxl);
+        font-style: normal;
+        font-weight: 700;
+        height: auto;
+        left: 108px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: center;
+        top: 76px;
+        width: auto;
+      }
+
+      .desktop-1 .usd-hLsHo9 {
+        background-color: transparent;
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xxl);
+        font-style: normal;
+        font-weight: 700;
+        height: auto;
+        left: 142px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: center;
+        top: 246px;
+        width: auto;
+      }
+
+      .desktop-1 .title-hLsHo9 {
+        background-color: transparent;
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: 96px;
+        font-style: normal;
+        font-weight: 700;
+        height: auto;
+        left: 71px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: center;
+        top: 122px;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482698-Ys8k0x {
+        -webkit-backdrop-filter: blur(41.599998474121094px) brightness(100%);
+        backdrop-filter: blur(41.599998474121094px) brightness(100%);
+        background-color: var(--black-2);
+        border-radius: 96px;
+        height: 370px;
+        left: 39px;
+        overflow: hidden;
+        position: absolute;
+        top: 1305px;
+        width: 172px;
+      }
+
+      .desktop-1 .jan-20-jan21-xTMWcx {
+        background-color: transparent;
+        height: auto;
+        left: 20px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 106px;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482699-Ys8k0x {
+        -webkit-backdrop-filter: blur(41.599998474121094px) brightness(100%);
+        backdrop-filter: blur(41.599998474121094px) brightness(100%);
+        background-color: var(--black-2);
+        border-radius: 96px;
+        height: 370px;
+        left: 247px;
+        overflow: hidden;
+        position: absolute;
+        top: 1376px;
+        width: 172px;
+      }
+
+      .desktop-1 .feb-21-may-21-huINLR {
+        background-color: transparent;
+        height: auto;
+        left: 20px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 106px;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482700-Ys8k0x {
+        -webkit-backdrop-filter: blur(41.599998474121094px) brightness(100%);
+        backdrop-filter: blur(41.599998474121094px) brightness(100%);
+        background-color: var(--black-2);
+        border-radius: 96px;
+        height: 370px;
+        left: 446px;
+        overflow: hidden;
+        position: absolute;
+        top: 1435px;
+        width: 172px;
+      }
+
+      .desktop-1 .july-21-dec-21-xu22mU {
+        background-color: transparent;
+        height: auto;
+        left: 20px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 106px;
+        width: auto;
+      }
+
+      .desktop-1 .line-1-Ys8k0x {
+        height: 5px;
+        left: 827px;
+        top: 1281px;
+        width: 203px;
+      }
+
+      .desktop-1 .line-2-Ys8k0x {
+        height: 5px;
+        left: 120px;
+        top: 2220px;
+        width: 203px;
+      }
+
+      .desktop-1 .frame-1707482702-Ys8k0x {
+        background-color: var(--woodsmoke);
+        border: 3px solid;
+        border-color: transparent;
+
+        border-radius: 16px;
+        height: 146px;
+        left: 783px;
+        overflow: hidden;
+        position: absolute;
+        top: 2080px;
+        width: 523px;
+      }
+
+      .desktop-1 .rectangle-1-a1T2lK {
+        background: linear-gradient(
+          180deg,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 0%,
+          rgb(255, 195.31505227088928, 69.77079212665558) 100%
+        );
+        background-color: transparent;
+        border-radius: 19px;
+        height: 146px;
+        left: 0px;
+        position: absolute;
+        top: 0px;
+        width: 63px;
+      }
+
+      .desktop-1 .brief-introduction-a1T2lK {
+        left: 101px;
+        top: 54px;
+        white-space: nowrap;
+      }
+
+      .desktop-1 .brief-introduction-zXTITx {
+        left: 101px;
+        top: 94px;
+        white-space: nowrap;
+      }
+
+      .desktop-1 .introduction-a1T2lK {
+        top: 74px;
+      }
+
+      .desktop-1 .introduction-zXTITx {
+        top: 110px;
+      }
+
+      .desktop-1 .brief-a1T2lK {
+        top: 74px;
+      }
+
+      .desktop-1 .brief-zXTITx {
+        top: 110px;
+      }
+
+      .desktop-1 .line-1-a1T2lK {
+        height: 3px;
+        left: 128px;
+        top: 82px;
+        width: 153px;
+      }
+
+      .desktop-1 .line-2-a1T2lK {
+        height: 3px;
+        left: 128px;
+        top: 118px;
+        width: 153px;
+      }
+
+      .desktop-1 .x5-a1T2lK {
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.6000000238418579) 0%,
+          rgba(
+              153.00000607967377,
+              153.00000607967377,
+              153.00000607967377,
+              0.6000000238418579
+            )
+            100%
+        );
+        background-clip: text;
+        height: auto;
+        left: 405px;
+        position: absolute;
+        text-align: left;
+        text-fill-color: transparent;
+        top: 39px;
+        width: auto;
+      }
+
+      .desktop-1 .wntes-a1T2lK {
+        background-color: transparent;
+        height: auto;
+        left: -6px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 60px;
+        transform: rotate(-90deg);
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482703-Ys8k0x {
+        background-color: var(--woodsmoke);
+        border-radius: 16px;
+        height: 146px;
+        left: 783px;
+        overflow: hidden;
+        position: absolute;
+        top: 2235px;
+        width: 523px;
+      }
+
+      .desktop-1 .brief-introduction-deluzH {
+        left: 101px;
+        top: 54px;
+        white-space: nowrap;
+      }
+
+      .desktop-1 .brief-introduction-CDn2VF {
+        left: 101px;
+        top: 94px;
+        white-space: nowrap;
+      }
+
+      .desktop-1 .introduction-deluzH {
+        top: 74px;
+      }
+
+      .desktop-1 .introduction-CDn2VF {
+        top: 110px;
+      }
+
+      .desktop-1 .brief-deluzH {
+        top: 74px;
+      }
+
+      .desktop-1 .brief-CDn2VF {
+        top: 110px;
+      }
+
+      .desktop-1 .line-1-deluzH {
+        height: 3px;
+        left: 128px;
+        top: 82px;
+        width: 153px;
+      }
+
+      .desktop-1 .line-2-deluzH {
+        height: 3px;
+        left: 128px;
+        top: 118px;
+        width: 153px;
+      }
+
+      .desktop-1 .x7-deluzH {
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.6000000238418579) 0%,
+          rgba(
+              153.00000607967377,
+              153.00000607967377,
+              153.00000607967377,
+              0.6000000238418579
+            )
+            100%
+        );
+        background-clip: text;
+        height: auto;
+        left: 405px;
+        position: absolute;
+        text-align: left;
+        text-fill-color: transparent;
+        top: 39px;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482704-Ys8k0x {
+        background-color: var(--woodsmoke);
+        border-radius: 16px;
+        height: 146px;
+        left: 783px;
+        overflow: hidden;
+        position: absolute;
+        top: 2390px;
+        width: 523px;
+      }
+
+      .desktop-1 .brief-introduction-Bj2mhg {
+        left: 101px;
+        top: 54px;
+        white-space: nowrap;
+      }
+
+      .desktop-1 .brief-introduction-INvLfM {
+        left: 101px;
+        top: 94px;
+        white-space: nowrap;
+      }
+
+      .desktop-1 .introduction-Bj2mhg {
+        top: 74px;
+      }
+
+      .desktop-1 .introduction-INvLfM {
+        top: 110px;
+      }
+
+      .desktop-1 .brief-Bj2mhg {
+        top: 74px;
+      }
+
+      .desktop-1 .brief-INvLfM {
+        top: 110px;
+      }
+
+      .desktop-1 .line-1-Bj2mhg {
+        height: 3px;
+        left: 128px;
+        top: 82px;
+        width: 153px;
+      }
+
+      .desktop-1 .line-2-Bj2mhg {
+        height: 3px;
+        left: 128px;
+        top: 118px;
+        width: 153px;
+      }
+
+      .desktop-1 .x9-Bj2mhg {
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.6000000238418579) 0%,
+          rgba(
+              153.00000607967377,
+              153.00000607967377,
+              153.00000607967377,
+              0.6000000238418579
+            )
+            100%
+        );
+        background-clip: text;
+        background-color: transparent;
+        height: auto;
+        left: 405px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        text-fill-color: transparent;
+        top: 39px;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482706-Ys8k0x {
+        -webkit-backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        align-items: center;
+        backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        background-color: var(--white-2);
+        border: 1px solid;
+        border-color: var(--white);
+        border-radius: 38px;
+        display: flex;
+        gap: 10px;
+        height: 67px;
+        justify-content: center;
+        left: 720px;
+        padding: 10px;
+        position: absolute;
+        top: 2997px;
+        width: 300px;
+      }
+
+      .desktop-1 .frame-1707482707-Ys8k0x {
+        -webkit-backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        align-items: center;
+        backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        background-color: var(--white-2);
+        border: 1px solid;
+        border-color: var(--white);
+        border-radius: 38px;
+        display: flex;
+        gap: 10px;
+        height: 67px;
+        justify-content: center;
+        left: 764px;
+        padding: 10px;
+        position: absolute;
+        top: 3064px;
+        width: 300px;
+      }
+
+      .desktop-1 .frame-1707482708-Ys8k0x {
+        -webkit-backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        align-items: center;
+        backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        background-color: var(--white-2);
+        border: 1px solid;
+        border-color: var(--white);
+        border-radius: 38px;
+        display: flex;
+        gap: 10px;
+        height: 67px;
+        justify-content: center;
+        left: 792px;
+        padding: 10px;
+        position: absolute;
+        top: 3131px;
+        width: 300px;
+      }
+
+      .desktop-1 .frame-1707482709-Ys8k0x {
+        -webkit-backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        align-items: center;
+        backdrop-filter: blur(52.400001525878906px) brightness(100%);
+        background-color: var(--white-2);
+        border: 1px solid;
+        border-color: var(--white);
+        border-radius: 38px;
+        display: flex;
+        gap: 10px;
+        height: 67px;
+        justify-content: center;
+        left: 826px;
+        padding: 10px;
+        position: absolute;
+        top: 3198px;
+        width: 300px;
+      }
+
+      .desktop-1 .line-3-Ys8k0x {
+        background-color: transparent;
+        height: 230px;
+        left: 887px;
+        position: absolute;
+        top: 3019px;
+        width: 130px;
+      }
+
+      .desktop-1 .frame-1707482710-Ys8k0x {
+        background-color: transparent;
+        height: 224px;
+        left: 116px;
+        overflow: hidden;
+        position: absolute;
+        top: 3611px;
+        width: 659px;
+      }
+
+      .desktop-1 .x1-xxpoKa {
+        height: auto;
+        left: 109px;
+        position: absolute;
+        text-align: left;
+        top: 96px;
+        width: auto;
+      }
+
+      .desktop-1 .ellipse-9-xxpoKa {
+        border: 1px dashed;
+        border-color: var(--cultured-pearl);
+        border-radius: 44.5px;
+        height: 89px;
+        left: 77px;
+        top: 81px;
+        width: 89px;
+      }
+
+      .desktop-1 .people-have-always-b-xxpoKa {
+        height: 72px;
+        left: 195px;
+        letter-spacing: 0px;
+        text-align: left;
+        top: 106px;
+        width: 375px;
+      }
+
+      .desktop-1 .people-have-always-b-UALfzy {
+        height: 50px;
+        left: 929px;
+        letter-spacing: 0px;
+        text-align: left;
+        top: 3989px;
+        width: 315px;
+      }
+
+      .desktop-1 .frame-1707482711-Ys8k0x {
+        background-color: transparent;
+        height: 224px;
+        left: 116px;
+        overflow: hidden;
+        position: absolute;
+        top: 3815px;
+        width: 659px;
+      }
+
+      .desktop-1 .x2-izREch {
+        height: auto;
+        left: 109px;
+        position: absolute;
+        text-align: left;
+        top: 96px;
+        width: auto;
+      }
+
+      .desktop-1 .ellipse-9-izREch {
+        border: 1px dashed;
+        border-color: var(--cultured-pearl);
+        border-radius: 44.5px;
+        height: 89px;
+        left: 77px;
+        top: 81px;
+        width: 89px;
+      }
+
+      .desktop-1 .people-have-always-b-izREch {
+        height: 72px;
+        left: 195px;
+        letter-spacing: 0px;
+        text-align: left;
+        top: 106px;
+        width: 375px;
+      }
+
+      .desktop-1 .frame-1707482712-Ys8k0x {
+        background-color: transparent;
+        height: 224px;
+        left: 120px;
+        overflow: hidden;
+        position: absolute;
+        top: 4024px;
+        width: 659px;
+      }
+
+      .desktop-1 .x3-T061V0 {
+        height: auto;
+        left: 109px;
+        position: absolute;
+        text-align: left;
+        top: 96px;
+        width: auto;
+      }
+
+      .desktop-1 .ellipse-9-T061V0 {
+        border: 1px dashed;
+        border-color: var(--cultured-pearl);
+        border-radius: 44.5px;
+        height: 89px;
+        left: 77px;
+        top: 81px;
+        width: 89px;
+      }
+
+      .desktop-1 .people-have-always-b-T061V0 {
+        height: 72px;
+        left: 195px;
+        letter-spacing: 0px;
+        text-align: left;
+        top: 106px;
+        width: 375px;
+      }
+
+      .desktop-1 .frame-1707482713-V3rtYt {
+        background-color: transparent;
+        /* border: 3px solid; */
+        border-color: transparent;
+        /* border-image: linear-gradient(
+            to bottom,
+            rgb(237.0000010728836, 79.00000289082527, 29.000000171363354),
+            rgb(235.0000011920929, 177.0000046491623, 55.00000052154064)
+          )
+          1; */
+        border-radius: 28px;
+        height: 392px;
+        left: 560px;
+        position: absolute;
+        top: 4576px;
+        width: 302px;
+      }
+
+      .desktop-1 .people-have-always-b-ukvwPE {
+        height: 136px;
+        left: 30px;
+        letter-spacing: 0px;
+        text-align: left;
+        top: 202px;
+        width: 221px;
+      }
+
+      .desktop-1 .protected-transaction-ukvwPE {
+        top: 126px;
+      }
+
+      .desktop-1 .frame-1707482716-Ys8k0x {
+        background-color: var(--black);
+        border-radius: 28px;
+        height: 392px;
+        left: 887px;
+        position: absolute;
+        top: 4576px;
+        width: 700px;
+      }
+
+      .desktop-1 .people-have-always-b-uxWwwM {
+        height: 136px;
+        left: 90px;
+        letter-spacing: 0px;
+        text-align: right;
+        top: 195px;
+        width: 221px;
+      }
+
+      .desktop-1 .program-benefits-uxWwwM {
+        background-color: transparent;
+        height: auto;
+        left: 142px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        text-shadow: 0px 4px 4px #ffffff;
+        top: 90px;
+        width: auto;
+      }
+
+      .desktop-1 .x16-uxWwwM {
+        background-color: transparent;
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xxxl);
+        font-style: normal;
+        font-weight: 500;
+        height: auto;
+        left: 263px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        top: 35px;
+        width: auto;
+      }
+
+      .desktop-1 .arrow-1-uxWwwM {
+        background-color: transparent;
+        height: 15px;
+        left: 26px;
+        position: absolute;
+        top: 46px;
+        width: 39px;
+      }
+
+      .desktop-1 .arrow-2-uxWwwM {
+        background-color: transparent;
+        height: 15px;
+        left: 80px;
+        position: absolute;
+        top: 46px;
+        width: 21px;
+      }
+
+      .desktop-1 .frame-1707482714-Ys8k0x {
+        background-color: #0b0a12;
+        border-radius: 28px;
+        height: 392px;
+        left: 233px;
+        position: absolute;
+        top: 4576px;
+        width: 302px;
+      }
+
+      .desktop-1 .people-have-always-b-v2xeva {
+        height: 136px;
+        left: 30px;
+        letter-spacing: 0px;
+        text-align: left;
+        top: 202px;
+        width: 221px;
+      }
+
+      .desktop-1 .protected-transaction-v2xeva {
+        top: 115px;
+      }
+
+      .desktop-1 .frame-1707482715-Ys8k0x {
+        background-color: #0b0a12;
+        border-radius: 28px;
+        height: 392px;
+        left: -94px;
+        position: absolute;
+        top: 4576px;
+        width: 302px;
+      }
+
+      .desktop-1 .people-have-always-b-FQZZKj {
+        height: 136px;
+        left: 30px;
+        letter-spacing: 0px;
+        text-align: left;
+        top: 202px;
+        width: 221px;
+      }
+
+      .desktop-1 .protected-transaction-FQZZKj {
+        top: 115px;
+      }
+
+      .desktop-1 .frame-1707482717-Ys8k0x {
+        left: 364px;
+        padding: 10px;
+        top: 4999px;
+      }
+
+      .desktop-1 .ellipse-14-tLWxGC {
+        border-radius: 6.5px;
+        height: 13px;
+        width: 13px;
+      }
+
+      .desktop-1 .ellipse-11-tLWxGC {
+        background-color: var(--shark);
+        border-radius: 6.5px;
+        height: 13px;
+        position: relative;
+        width: 13px;
+      }
+
+      .desktop-1 .ellipse-12-tLWxGC {
+        background-color: var(--shark);
+        border-radius: 6.5px;
+        height: 13px;
+        position: relative;
+        width: 13px;
+      }
+
+      .desktop-1 .ellipse-13-tLWxGC {
+        background-color: var(--shark);
+        border-radius: 6.5px;
+        height: 13px;
+        position: relative;
+        width: 13px;
+      }
+
+      .desktop-1 .frame-1707482723-Ys8k0x {
+        background-color: transparent;
+        height: 774px;
+        left: 22px;
+        overflow: hidden;
+        position: absolute;
+        top: 5212px;
+        width: 1296px;
+      }
+
+      .desktop-1 .affiliate-programs-y9cckG {
+        background-color: transparent;
+        height: auto;
+        left: 489px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: center;
+        text-shadow: 0px 4px 4px #ffffff;
+        top: 74px;
+        width: auto;
+      }
+
+      .desktop-1 .standard-referral-y9cckG {
+        background-color: transparent;
+        height: auto;
+        left: 1020px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: center;
+        text-shadow: 0px 4px 4px #ffffff;
+        top: 351px;
+        width: auto;
+      }
+
+      .desktop-1 .global-representative-y9cckG {
+        background-color: transparent;
+        height: auto;
+        left: 1064px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        text-shadow: 0px 4px 4px #ffffff;
+        top: 400px;
+        width: auto;
+      }
+
+      .desktop-1 .comission-levels-y9cckG {
+        background-color: transparent;
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xxl);
+        font-style: normal;
+        font-weight: 400;
+        height: auto;
+        left: 130px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        text-shadow: 0px 4px 4px #ffffff;
+        top: 652px;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482722-y9cckG {
+        align-items: center;
+        background-color: transparent;
+        display: inline-flex;
+        gap: 104px;
+        justify-content: center;
+        left: 352px;
+        padding: 10px;
+        position: absolute;
+        top: 662px;
+      }
+
+      .desktop-1 .x1-GZxgbX {
+        margin-top: -1px;
+        position: relative;
+        text-align: right;
+        text-shadow: 0px 4px 4px #ffffff;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .x2-GZxgbX {
+        margin-top: -1px;
+        position: relative;
+        text-align: right;
+        text-shadow: 0px 4px 4px #ffffff;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .x3-GZxgbX {
+        margin-top: -1px;
+        position: relative;
+        text-align: right;
+        text-shadow: 0px 4px 4px #ffffff;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .x4-GZxgbX {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-top: -1px;
+        position: relative;
+        text-align: right;
+        text-shadow: 0px 4px 4px #ffffff;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .x5-GZxgbX {
+        margin-top: -1px;
+        position: relative;
+        text-align: right;
+        text-shadow: 0px 4px 4px #ffffff;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .x6-GZxgbX {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-top: -1px;
+        position: relative;
+        text-align: right;
+        text-shadow: 0px 4px 4px #ffffff;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .x7-GZxgbX {
+        margin-top: -1px;
+        position: relative;
+        text-align: right;
+        text-shadow: 0px 4px 4px #ffffff;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .vector-14-y9cckG {
+        background-color: transparent;
+        height: 207px;
+        left: 383px;
+        position: absolute;
+        top: 406px;
+        width: 648px;
+      }
+
+      .desktop-1 .vector-15-y9cckG {
+        background-color: transparent;
+        height: 211px;
+        left: 328px;
+        position: absolute;
+        top: 370px;
+        width: 677px;
+      }
+
+      .desktop-1 .line-4-y9cckG {
+        background-color: transparent;
+        height: 144px;
+        left: 468px;
+        position: absolute;
+        top: 272px;
+        width: 3px;
+      }
+
+      .desktop-1 .line-6-y9cckG {
+        background-color: transparent;
+        height: 144px;
+        left: 489px;
+        position: absolute;
+        top: 328px;
+        width: 3px;
+      }
+
+      .desktop-1 .line-7-y9cckG {
+        background-color: transparent;
+        height: 144px;
+        left: 599px;
+        position: absolute;
+        top: 356px;
+        width: 3px;
+      }
+
+      .desktop-1 .line-5-y9cckG {
+        background-color: transparent;
+        height: 144px;
+        left: 579px;
+        position: absolute;
+        top: 272px;
+        width: 3px;
+      }
+
+      .desktop-1 .frame-1707482718-y9cckG {
+        align-items: center;
+        background-color: var(--white);
+        border-radius: 31px;
+        display: flex;
+        gap: 10px;
+        height: 25px;
+        justify-content: center;
+        left: 464px;
+        padding: 10px;
+        position: absolute;
+        top: 254px;
+        width: 58px;
+      }
+
+      .desktop-1 .ellipse-10-d5uGhL {
+        background-color: #ebb137;
+      }
+
+      .desktop-1 .x5-d5uGhL {
+        margin-bottom: -6px;
+        margin-right: -5px;
+        margin-top: -8px;
+        position: relative;
+        text-align: center;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .frame-1707482720-y9cckG {
+        align-items: center;
+        background-color: var(--white);
+        border-radius: 31px;
+        display: flex;
+        gap: 10px;
+        height: 25px;
+        justify-content: center;
+        left: 485px;
+        padding: 10px;
+        position: absolute;
+        top: 310px;
+        width: 58px;
+      }
+
+      .desktop-1 .ellipse-10-ZvkIjl {
+        background-color: var(--pomegranate);
+      }
+
+      .desktop-1 .x5-ZvkIjl {
+        margin-bottom: -6px;
+        margin-right: -5px;
+        margin-top: -8px;
+        position: relative;
+        text-align: center;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .frame-1707482721-y9cckG {
+        align-items: center;
+        background-color: var(--white);
+        border-radius: 31px;
+        display: flex;
+        gap: 10px;
+        height: 25px;
+        justify-content: center;
+        left: 595px;
+        padding: 10px;
+        position: absolute;
+        top: 338px;
+        width: 58px;
+      }
+
+      .desktop-1 .ellipse-10-4jDom3 {
+        background-color: var(--pomegranate);
+      }
+
+      .desktop-1 .x5-4jDom3 {
+        margin-bottom: -6px;
+        margin-right: -5px;
+        margin-top: -8px;
+        position: relative;
+        text-align: center;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .frame-1707482719-y9cckG {
+        align-items: center;
+        background-color: var(--white);
+        border-radius: 31px;
+        display: flex;
+        gap: 10px;
+        height: 25px;
+        justify-content: center;
+        left: 572px;
+        padding: 10px;
+        position: absolute;
+        top: 254px;
+        width: 58px;
+      }
+
+      .desktop-1 .ellipse-10-qI3DU5 {
+        background-color: #ebb137;
+      }
+
+      .desktop-1 .x5-qI3DU5 {
+        margin-bottom: -6px;
+        margin-right: -5px;
+        margin-top: -8px;
+        position: relative;
+        text-align: center;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .frame-1707482724-Ys8k0x {
+        background-color: transparent;
+        height: 544px;
+        left: 77px;
+        overflow: hidden;
+        position: absolute;
+        top: 6053px;
+        width: 1241px;
+      }
+
+      .desktop-1 .frame-1707482713-hmgRUf {
+        align-items: center;
+        background-color: transparent;
+        border: 3px solid;
+        border-color: transparent;
+        border-image: linear-gradient(
+            to bottom,
+            rgb(237.0000010728836, 79.00000289082527, 29.000000171363354),
+            rgb(235.0000011920929, 177.0000046491623, 55.00000052154064)
+          )
+          1;
+        border-radius: 8px;
+        display: flex;
+        gap: 10px;
+        height: 56px;
+        justify-content: center;
+        left: 653px;
+        padding: 10px;
+        position: absolute;
+        top: 422px;
+        width: 186px;
+      }
+
+      .desktop-1 .frame-1707482717-hmgRUf {
+        flex-direction: column;
+        left: 649px;
+        padding: 10px 11px 10px 10px;
+        top: 276px;
+      }
+
+      .desktop-1 .ellipse-14-gp7iUl {
+        border-radius: 3.5px;
+        height: 7px;
+        transform: rotate(180deg);
+        width: 7px;
+      }
+
+      .desktop-1 .ellipse-11-gp7iUl {
+        background-color: var(--white);
+        border-radius: 3.5px;
+        height: 7px;
+        position: relative;
+        transform: rotate(180deg);
+        width: 7px;
+      }
+
+      .desktop-1 .ellipse-12-gp7iUl {
+        background-color: var(--white);
+        border-radius: 3.5px;
+        height: 7px;
+        position: relative;
+        transform: rotate(180deg);
+        width: 7px;
+      }
+
+      .desktop-1 .ellipse-13-gp7iUl {
+        background-color: var(--white);
+        border-radius: 3.5px;
+        height: 7px;
+        position: relative;
+        transform: rotate(180deg);
+        width: 7px;
+      }
+
+      .desktop-1 .in-nature-stacking-i-hmgRUf {
+        height: 144px;
+        left: 653px;
+        text-align: left;
+        top: 69px;
+        width: 510px;
+      }
+
+      .desktop-1 .flex-container-23222-hmgRUf {
+        align-items: flex-start;
+        background-color: transparent;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        height: 114px;
+        left: 677px;
+        position: absolute;
+        top: 277px;
+        width: 510px;
+      }
+
+      .desktop-1 .text0-23222-ZMIhtR {
+        align-self: stretch;
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: relative;
+        text-align: left;
+      }
+
+      .desktop-1 .span0-0Km4Fo {
+      }
+
+      .desktop-1 .text1-23222-ZMIhtR {
+        align-self: stretch;
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: relative;
+        text-align: left;
+      }
+
+      .desktop-1 .span1-ChCMfK {
+      }
+
+      .desktop-1 .text2-23222-ZMIhtR {
+        align-self: stretch;
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: relative;
+        text-align: left;
+      }
+
+      .desktop-1 .span2-m2Laaf {
+      }
+
+      .desktop-1 .text3-23222-ZMIhtR {
+        align-self: stretch;
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: relative;
+        text-align: left;
+      }
+
+      .desktop-1 .span3-50LjnW {
+      }
+
+      .desktop-1 .text4-23222-ZMIhtR {
+        align-self: stretch;
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: relative;
+        text-align: left;
+      }
+
+      .desktop-1 .span4-shW95v {
+      }
+
+      .desktop-1 .what-is-an-affiliate-hmgRUf {
+        background-color: transparent;
+        color: var(--white);
+        font-family: var(--font-family-inter);
+        font-size: 64px;
+        font-style: normal;
+        font-weight: 900;
+        height: auto;
+        left: 74px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        text-shadow: 0px 4px 4px #ffffff;
+        top: 110px;
+        width: auto;
+      }
+
+      .desktop-1 .line-8-hmgRUf {
+        background-color: transparent;
+        height: 389px;
+        left: 565px;
+        position: absolute;
+        top: 45px;
+        width: 3px;
+      }
+
+      .desktop-1 .frame-1707482725-Ys8k0x {
+        background-color: transparent;
+        height: 752px;
+        left: 43px;
+        overflow: hidden;
+        position: absolute;
+        top: 6810px;
+        width: 1218px;
+      }
+
+      .desktop-1 .frame-1707482713-x3pRfk {
+        align-items: center;
+        background-color: transparent;
+        border: 1px solid;
+        border-color: transparent;
+        border-image: linear-gradient(
+            to bottom,
+            rgb(237.0000010728836, 79.00000289082527, 29.000000171363354),
+            rgb(235.0000011920929, 177.0000046491623, 55.00000052154064)
+          )
+          1;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        height: 85px;
+        justify-content: center;
+        left: 839px;
+        padding: 10px;
+        position: absolute;
+        top: 201px;
+        width: 259px;
+      }
+
+      .desktop-1 .x54-VdkRZL {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-top: -4px;
+        position: relative;
+        text-align: left;
+        width: fit-content;
+      }
+
+      .desktop-1 .frame-1707482714-x3pRfk {
+        align-items: center;
+        background-color: transparent;
+        border: 1px solid;
+        border-color: transparent;
+        border-image: linear-gradient(
+            to bottom,
+            rgb(237.0000010728836, 79.00000289082527, 29.000000171363354),
+            rgb(235.0000011920929, 177.0000046491623, 55.00000052154064)
+          )
+          1;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        height: 85px;
+        justify-content: center;
+        left: 839px;
+        padding: 10px;
+        position: absolute;
+        top: 341px;
+        width: 259px;
+      }
+
+      .desktop-1 .x6505-6NuCTM {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-top: -4px;
+        position: relative;
+        text-align: left;
+        width: fit-content;
+      }
+
+      .desktop-1 .frame-1707482715-x3pRfk {
+        align-items: center;
+        background-color: transparent;
+        border: 1px solid;
+        border-color: transparent;
+        border-image: linear-gradient(
+            to bottom,
+            rgb(237.0000010728836, 79.00000289082527, 29.000000171363354),
+            rgb(235.0000011920929, 177.0000046491623, 55.00000052154064)
+          )
+          1;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        height: 85px;
+        justify-content: center;
+        left: 839px;
+        padding: 10px;
+        position: absolute;
+        top: 476px;
+        width: 259px;
+      }
+
+      .desktop-1 .x552554196-eFxpDg {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-top: -4px;
+        position: relative;
+        text-align: left;
+        width: fit-content;
+      }
+
+      .desktop-1 .frame-1707482716-x3pRfk {
+        align-items: center;
+        background-color: transparent;
+        border: 1px solid;
+        border-color: transparent;
+        border-image: linear-gradient(
+            to bottom,
+            rgb(237.0000010728836, 79.00000289082527, 29.000000171363354),
+            rgb(235.0000011920929, 177.0000046491623, 55.00000052154064)
+          )
+          1;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        height: 85px;
+        justify-content: center;
+        left: 839px;
+        padding: 10px;
+        position: absolute;
+        top: 599px;
+        width: 259px;
+      }
+
+      .desktop-1 .x708596325-sNsTgk {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: relative;
+        text-align: left;
+        width: fit-content;
+      }
+
+      .desktop-1 .blister-statistics-x3pRfk {
+        background-color: transparent;
+        height: auto;
+        left: 453px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        text-shadow: 0px 4px 4px #ffffff;
+        top: 39px;
+        width: auto;
+      }
+
+      .desktop-1 .ellipse-15-x3pRfk {
+        background-color: transparent;
+        height: 339px;
+        left: 167px;
+        position: absolute;
+        top: 332px;
+        width: 339px;
+      }
+
+      .desktop-1 .ellipse-17-x3pRfk {
+        background-color: transparent;
+        height: 412px;
+        left: 136px;
+        position: absolute;
+        top: 296px;
+        width: 406px;
+      }
+
+      .desktop-1 .ellipse-16-x3pRfk {
+        background-color: transparent;
+        height: 237px;
+        left: 218px;
+        position: absolute;
+        top: 383px;
+        width: 237px;
+      }
+
+      .desktop-1 .ellipse-8-x3pRfk {
+        border-radius: 33.53px;
+        height: 67px;
+        left: 303px;
+        top: 469px;
+        transform: rotate(-111.44deg);
+        width: 67px;
+      }
+
+      .desktop-1 .vector-16-x3pRfk {
+        background-color: transparent;
+        height: 99px;
+        left: 441px;
+        position: absolute;
+        top: 241px;
+        width: 364px;
+      }
+
+      .desktop-1 .vector-17-x3pRfk {
+        background-color: transparent;
+        height: 125px;
+        left: 342px;
+        position: absolute;
+        top: 379px;
+        width: 462px;
+      }
+
+      .desktop-1 .vector-18-x3pRfk {
+        background-color: transparent;
+        height: 88px;
+        left: 458px;
+        position: absolute;
+        top: 568px;
+        width: 347px;
+      }
+
+      .desktop-1 .vector-19-x3pRfk {
+        background-color: transparent;
+        height: 11px;
+        left: 420px;
+        position: absolute;
+        top: 511px;
+        width: 385px;
+      }
+
+      .desktop-1 .ellipse-18-x3pRfk {
+        background-color: transparent;
+        height: 352px;
+        left: 132px;
+        position: absolute;
+        top: 299px;
+        width: 409px;
+      }
+
+      .desktop-1 .frame-1707482726-Ys8k0x {
+        background-color: transparent;
+        height: 1247px;
+        left: -26px;
+        overflow: hidden;
+        position: absolute;
+        top: 7661px;
+        width: 1392px;
+      }
+
+      .desktop-1 .in-nature-stacking-i-VfyIAa {
+        height: 108px;
+        left: 600px;
+        text-align: right;
+        top: 1053px;
+        width: 510px;
+      }
+
+      .desktop-1 .blister-VfyIAa {
+        left: 143px;
+        top: 976px;
+      }
+
+      .desktop-1 .frame-1707482713-VfyIAa {
+        align-items: center;
+        background-color: #0000008f;
+        border-radius: 41px;
+        display: flex;
+        gap: 10px;
+        height: 102px;
+        justify-content: center;
+        left: 141px;
+        padding: 10px 0px;
+        position: absolute;
+        top: 242px;
+        width: 553px;
+      }
+
+      .desktop-1 .rectangle-3-VfyIAa {
+        background-color: #646568;
+        border-radius: 26px;
+        height: 115px;
+        left: 193px;
+        position: absolute;
+        top: 664px;
+        width: 449px;
+      }
+
+      .desktop-1 .rectangle-4-VfyIAa {
+        background-color: #646568;
+        border-radius: 26px;
+        height: 115px;
+        left: 783px;
+        position: absolute;
+        top: 664px;
+        width: 449px;
+      }
+
+      .desktop-1 .rectangle-2-VfyIAa {
+        background-color: #93989b;
+        border-radius: 26px;
+        height: 115px;
+        left: 162px;
+        position: absolute;
+        top: 643px;
+        width: 510px;
+      }
+
+      .desktop-1 .rectangle-5-VfyIAa {
+        background-color: #93989b;
+        border-radius: 26px;
+        height: 115px;
+        left: 752px;
+        position: absolute;
+        top: 643px;
+        width: 510px;
+      }
+
+      .desktop-1 .frame-1707482715-VfyIAa {
+        background: linear-gradient(
+          180deg,
+          rgb(255, 195.31505227088928, 69.77079212665558) 0%,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 100%
+        );
+        background-color: transparent;
+        border-radius: 41px;
+        height: 306px;
+        left: 136px;
+        position: absolute;
+        top: 431px;
+        width: 558px;
+      }
+
+      .desktop-1 .x104000-usd-xRXbPZ {
+        top: 115px;
+      }
+
+      .desktop-1 .x104000-usd-AdxWDO {
+        top: 188px;
+      }
+
+      .desktop-1 .line-9-xRXbPZ {
+        height: 1px;
+        left: 78px;
+        object-fit: cover;
+        top: 100px;
+        width: 406px;
+      }
+
+      .desktop-1 .ellipse-8-xRXbPZ {
+        border: 3px solid;
+        border-color: var(--golden-tainoi);
+        border-radius: 24.52px;
+        height: 49px;
+        left: 365px;
+        top: 114px;
+        transform: rotate(60deg);
+        width: 49px;
+      }
+
+      .desktop-1 .b-xRXbPZ {
+        height: 39px;
+        left: 378px;
+        top: 115px;
+      }
+
+      .desktop-1 .ellipse-9-xRXbPZ {
+        background: linear-gradient(
+          180deg,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 0%,
+          rgb(255, 195.31505227088928, 69.77079212665558) 100%
+        );
+        border: 3px solid;
+        border-color: var(--golden-tainoi);
+        border-radius: 24.52px;
+        height: 49px;
+        left: 365px;
+        top: 188px;
+        transform: rotate(60deg);
+        width: 49px;
+      }
+
+      .desktop-1 .l-xRXbPZ {
+        height: 39px;
+        left: 381px;
+        top: 189px;
+      }
+
+      .desktop-1 .plus-circle-outlined-xRXbPZ {
+        top: 119px;
+      }
+
+      .desktop-1 .plus-circle-outlined-AdxWDO {
+        top: 190px;
+      }
+
+      .desktop-1 .line-9-VfyIAa {
+        height: 4px;
+        left: 184px;
+        top: 915px;
+        width: 1078px;
+      }
+
+      .desktop-1 .frame-1707482716-VfyIAa {
+        background: linear-gradient(
+          180deg,
+          rgb(255, 195.31505227088928, 69.77079212665558) 0%,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 100%
+        );
+        background-color: transparent;
+        border-radius: 41px;
+        height: 306px;
+        left: 726px;
+        position: absolute;
+        top: 431px;
+        width: 558px;
+      }
+
+      .desktop-1 .x104000-usd-FMFoCc {
+        top: 115px;
+      }
+
+      .desktop-1 .x104000-usd-75OUdr {
+        top: 188px;
+      }
+
+      .desktop-1 .line-9-FMFoCc {
+        height: 1px;
+        left: 78px;
+        object-fit: cover;
+        top: 100px;
+        width: 406px;
+      }
+
+      .desktop-1 .ellipse-8-FMFoCc {
+        border: 3px solid;
+        border-color: var(--golden-tainoi);
+        border-radius: 24.52px;
+        height: 49px;
+        left: 365px;
+        top: 114px;
+        transform: rotate(60deg);
+        width: 49px;
+      }
+
+      .desktop-1 .b-FMFoCc {
+        height: 39px;
+        left: 378px;
+        top: 115px;
+      }
+
+      .desktop-1 .ellipse-9-FMFoCc {
+        background: linear-gradient(
+          180deg,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 0%,
+          rgb(255, 195.31505227088928, 69.77079212665558) 100%
+        );
+        border: 3px solid;
+        border-color: var(--golden-tainoi);
+        border-radius: 24.52px;
+        height: 49px;
+        left: 365px;
+        top: 188px;
+        transform: rotate(60deg);
+        width: 49px;
+      }
+
+      .desktop-1 .l-FMFoCc {
+        height: 39px;
+        left: 381px;
+        top: 189px;
+      }
+
+      .desktop-1 .plus-circle-outlined-FMFoCc {
+        top: 119px;
+      }
+
+      .desktop-1 .plus-circle-outlined-75OUdr {
+        top: 190px;
+      }
+
+      .desktop-1 .disclaimer-VfyIAa {
+        background-color: transparent;
+        height: 39px;
+        left: 893px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        top: 981px;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482714-VfyIAa {
+        align-items: center;
+        background-color: #0000008f;
+        border-radius: 41px;
+        display: flex;
+        gap: 10px;
+        height: 102px;
+        justify-content: center;
+        left: 729px;
+        padding: 10px;
+        position: absolute;
+        top: 242px;
+        width: 553px;
+      }
+
+      .desktop-1 .transactions-VfyIAa {
+        background-color: transparent;
+        height: auto;
+        left: 581px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        text-shadow: 0px 4px 4px #ffffff;
+        top: 94px;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482728-Ys8k0x {
+        background-color: transparent;
+        height: 375px;
+        left: 117px;
+        overflow: hidden;
+        position: absolute;
+        top: 8841px;
+        width: 1223px;
+      }
+
+      .desktop-1 .ellipse-8-nsJ61z {
+        border-radius: 50.65px;
+        height: 101px;
+        left: 1023px;
+        top: 126px;
+        transform: rotate(45deg);
+        width: 101px;
+      }
+
+      .desktop-1 .line-9-nsJ61z {
+        height: 4px;
+        left: 52px;
+        top: 315px;
+        width: 1078px;
+      }
+
+      .desktop-1 .in-nature-stacking-is-very-common-nsJ61z {
+        background-color: transparent;
+        height: 18px;
+        left: 460px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        top: 336px;
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482690-nsJ61z {
+        gap: 63px;
+        left: 215px;
+        top: 229px;
+      }
+
+      .desktop-1 .we-accpst-nsJ61z {
+        background-color: transparent;
+        height: 18px;
+        left: 546px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        top: 68px;
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .desktop-1 .frame-1707482727-nsJ61z {
+        background-color: transparent;
+        height: 77px;
+        left: 338px;
+        position: absolute;
+        top: 111px;
+        width: 507px;
+      }
+
+      .desktop-1 .ellipse-19-fESy8U {
+        background-color: #04150d;
+        border-radius: 28.5px;
+        height: 57px;
+        left: 10px;
+        position: absolute;
+        top: 10px;
+        width: 57px;
+      }
+
+      .desktop-1 .ellipse-20-fESy8U {
+        background-color: #0c1307;
+        border-radius: 28.5px;
+        height: 57px;
+        left: 96px;
+        position: absolute;
+        top: 10px;
+        width: 57px;
+      }
+
+      .desktop-1 .ellipse-21-fESy8U {
+        background-color: #352005;
+        border-radius: 28.5px;
+        height: 57px;
+        left: 182px;
+        position: absolute;
+        top: 10px;
+        width: 57px;
+      }
+
+      .desktop-1 .ellipse-22-fESy8U {
+        background-color: #2b341c;
+        border-radius: 28.5px;
+        height: 57px;
+        left: 268px;
+        position: absolute;
+        top: 10px;
+        width: 57px;
+      }
+
+      .desktop-1 .ellipse-23-fESy8U {
+        background-color: #111111;
+        border-radius: 28.5px;
+        height: 57px;
+        left: 354px;
+        position: absolute;
+        top: 10px;
+        width: 57px;
+      }
+
+      .desktop-1 .ellipse-24-fESy8U {
+        background-color: #1e1e1e;
+        border-radius: 28.5px;
+        height: 57px;
+        left: 440px;
+        position: absolute;
+        top: 10px;
+        width: 57px;
+      }
+
+      .desktop-1 .p-fESy8U {
+        background-color: transparent;
+        height: 44px;
+        left: 26px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        top: 16px;
+        width: auto;
+      }
+
+      .desktop-1 .e-fESy8U {
+        background-color: transparent;
+        color: #248922;
+        font-family: var(--font-family-inter);
+        font-size: 36px;
+        font-style: italic;
+        font-weight: 700;
+        height: 44px;
+        left: 113px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        top: 16px;
+        width: auto;
+      }
+
+      .desktop-1 .b-fESy8U {
+        color: var(--pomegranate);
+        font-family: var(--font-family-inter);
+        font-size: 36px;
+        font-style: italic;
+        font-weight: 700;
+        height: 44px;
+        left: 198px;
+        top: 16px;
+      }
+
+      .desktop-1 .d-fESy8U {
+        background-color: transparent;
+        color: #b9ac68;
+        font-family: var(--font-family-inter);
+        font-size: 36px;
+        font-style: italic;
+        font-weight: 700;
+        height: 44px;
+        left: 281px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        top: 16px;
+        width: auto;
+      }
+
+      .desktop-1 .f-fESy8U {
+        background-color: transparent;
+        height: 44px;
+        left: 372px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        top: 16px;
+        width: auto;
+      }
+
+      .desktop-1 .l-fESy8U {
+        height: 44px;
+        left: 459px;
+        top: 16px;
+      }
+
+      .desktop-1 .send-outlined-nsJ61z {
+        background-color: transparent;
+        height: 53px;
+        left: 1054px;
+        position: absolute;
+        top: 150px;
+        width: 53px;
+      }
+
+      .desktop-1 .b {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        width: auto;
+      }
+
+      .desktop-1 .blister {
+        background-color: transparent;
+        height: auto;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        width: auto;
+      }
+
+      .desktop-1 .brief {
+        background-color: transparent;
+        height: auto;
+        left: 101px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .desktop-1 .brief-introduction {
+        background-color: transparent;
+        height: auto;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        width: auto;
+      }
+
+      .desktop-1 .buys {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-bottom: -2px;
+        margin-top: -2px;
+        position: relative;
+        text-align: left;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .connected-with-each {
+        background-color: transparent;
+        height: 126px;
+        left: 19px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 195px;
+        width: 138px;
+      }
+
+      .desktop-1 .connected-with-each-other-so {
+        background-color: transparent;
+        height: 39px;
+        left: 19px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 62px;
+        width: 74px;
+      }
+
+      .desktop-1 .curious-plan {
+        background-color: transparent;
+        height: auto;
+        left: 101px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 26px;
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .desktop-1 .dally-proft-5-usd {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: relative;
+        text-align: left;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .download {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-top: -1px;
+        position: relative;
+        text-align: left;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .ellipse-10 {
+        border-radius: 6.5px;
+        height: 13px;
+        margin-bottom: -4px;
+        margin-left: -5px;
+        margin-top: -4px;
+        position: relative;
+        width: 13px;
+      }
+
+      .desktop-1 .ellipse-14 {
+        background-color: var(--shark);
+        position: relative;
+      }
+
+      .desktop-1 .ellipse-7 {
+        background-color: transparent;
+        position: absolute;
+      }
+
+      .desktop-1 .ellipse-8 {
+        background: linear-gradient(
+          180deg,
+          rgb(237.0000010728836, 79.00000289082527, 29.000000171363354) 0%,
+          rgb(255, 195.31505227088928, 69.77079212665558) 100%
+        );
+        background-color: transparent;
+        position: absolute;
+      }
+
+      .desktop-1 .ellipse-9 {
+        background-color: transparent;
+        position: absolute;
+      }
+
+      .desktop-1 .exclamation-circle-outlined {
+        background-color: transparent;
+        height: 41px;
+        position: relative;
+        width: 41px;
+      }
+
+      .desktop-1 .frame-1707482690 {
+        align-items: center;
+        background-color: transparent;
+        display: inline-flex;
+        justify-content: center;
+        padding: 10px;
+        position: absolute;
+      }
+
+      .desktop-1 .frame-1707482717 {
+        align-items: flex-start;
+        background-color: transparent;
+        display: inline-flex;
+        gap: 16px;
+        position: absolute;
+      }
+
+      .desktop-1 .get-hitstory {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: relative;
+        text-align: left;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .get-started {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        text-align: left;
+      }
+
+      .desktop-1 .help {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-top: -1px;
+        position: relative;
+        text-align: left;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .hitstory {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-top: -2px;
+        position: relative;
+        text-align: left;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .home-page {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-top: -1px;
+        position: relative;
+        text-align: left;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .in-nature-stacking-i {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+      }
+
+      .desktop-1 .introduction {
+        background-color: transparent;
+        height: auto;
+        left: 283px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .desktop-1 .joiasan-us {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-top: -1px;
+        position: relative;
+        text-align: left;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .join-us {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-top: -1px;
+        position: relative;
+        text-align: left;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .l {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        width: auto;
+      }
+
+      .desktop-1 .line-1 {
+        background-color: transparent;
+        position: absolute;
+      }
+
+      .desktop-1 .line-10 {
+        background-color: transparent;
+        height: 1px;
+        left: 76px;
+        object-fit: cover;
+        position: absolute;
+        top: 173px;
+        width: 406px;
+      }
+
+      .desktop-1 .line-11 {
+        background-color: transparent;
+        height: 1px;
+        left: 78px;
+        object-fit: cover;
+        position: absolute;
+        top: 245px;
+        width: 406px;
+      }
+
+      .desktop-1 .line-2 {
+        background-color: transparent;
+        position: absolute;
+      }
+
+      .desktop-1 .line-9 {
+        background-color: transparent;
+        position: absolute;
+      }
+
+      .desktop-1 .message {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        margin-top: -1px;
+        position: relative;
+        text-align: left;
+        white-space: nowrap;
+        width: fit-content;
+      }
+
+      .desktop-1 .mufu10 {
+        background-color: transparent;
+        color: var(--black);
+        font-family: var(--font-family-inter);
+        font-size: var(--font-size-xxxl);
+        font-style: normal;
+        font-weight: 600;
+        height: 39px;
+        left: 78px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        top: 43px;
+        width: auto;
+      }
+
+      .desktop-1 .people-have-always {
+        background-color: transparent;
+        line-height: normal;
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      .desktop-1 .people-have-always-b {
+        background-color: transparent;
+        line-height: normal;
+        position: absolute;
+      }
+
+      .desktop-1 .plus-circle-outlined {
+        background-color: transparent;
+        height: 38px;
+        left: 83px;
+        position: absolute;
+        width: 38px;
+      }
+
+      .desktop-1 .protected-transaction {
+        background-color: transparent;
+        height: auto;
+        left: 30px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        width: auto;
+      }
+
+      .desktop-1 .recent-deposits {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: relative;
+        text-align: right;
+        width: 366px;
+      }
+
+      .desktop-1 .register-your-account {
+        background-color: transparent;
+        height: auto;
+        left: 195px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: left;
+        top: 72px;
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .desktop-1 .vector {
+        background-color: transparent;
+        height: 172px;
+        left: 26px;
+        position: absolute;
+        top: 40px;
+        width: 600px;
+      }
+
+      .desktop-1 .x1 {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+      }
+
+      .desktop-1 .x104000-usd {
+        background-color: transparent;
+        height: 39px;
+        left: 136px;
+        letter-spacing: 0px;
+        line-height: normal;
+        position: absolute;
+        text-align: right;
+        width: auto;
+      }
+
+      .desktop-1 .x2 {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+      }
+
+      .desktop-1 .x3 {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+      }
+
+      .desktop-1 .x5 {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+      }
+
+      .desktop-1 .x7 {
+        background-color: transparent;
+        letter-spacing: 0px;
+        line-height: normal;
+      }
+    </style>
+    <style id="action-links-styles">
+      @import url("https://fonts.googleapis.com/css2?family=Mulish&display=swap");
+
+      #anima-interface {
+        transition: all 0.5s ease-in-out;
+      }
+
+      #anima-watermark {
+        transition: all 0.5s ease-in-out;
+        display: none;
+      }
+      #anima-watermark-link {
+        position: fixed;
+        bottom: 20px;
+        height: 30px;
+        border-radius: 1000px;
+        background: #3b3b3b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        transition: width 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        text-decoration: none;
+        color: #fff;
+        padding: 8px 16px 8px 11px;
+        font-family: Mulish, sans-serif;
+        font-size: 12px;
+      }
+      #anima-watermark-link .text {
+        margin-left: 6px;
+      }
+
+      .omniview-anima-action-links .link {
+        height: 30px;
+        width: 30px;
+        border-radius: 1000px;
+        background: #3b3b3b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        transition: width 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        text-decoration: none;
+        color: #fff;
+      }
+      .omniview-anima-action-links #comment-link .text,
+      .omniview-anima-action-links #code-link .text {
+        display: none;
+        font-size: 12px;
+        margin-right: 5px;
+      }
+      .omniview-anima-action-links #comment-link:hover,
+      .omniview-anima-action-links #code-link:hover {
+        width: 105px;
+      }
+      .omniview-anima-action-links #comment-link.pop-active,
+      .omniview-anima-action-links #code-link.pop-active {
+        width: 105px;
+        background: #ff6250;
+      }
+      .omniview-anima-action-links #comment-link.pop-active .text,
+      .omniview-anima-action-links #code-link.pop-active .text {
+        display: block;
+      }
+      .omniview-anima-action-links #comment-link:hover .text,
+      .omniview-anima-action-links #code-link:hover .text {
+        display: block;
+      }
+
+      .link.navigation {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+        height: 32px;
+        color: #fff;
+        font-size: 12px;
+        cursor: default;
+        padding: 0 5px;
+      }
+      .link.navigation .icon {
+        margin: 0 6px;
+        fill: none;
+        stroke: currentColor;
+        cursor: pointer;
+      }
+      .link.navigation .icon.disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      .link.navigation .home-icon {
+        margin-left: 6px;
+        fill: currentColor;
+        stroke: currentColor;
+        cursor: pointer;
+      }
+
+      .omniview-anima-action-links .restart {
+        height: 30px;
+        padding: 0 12px;
+        background: #3b3b3b;
+        border-radius: 1000px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #f1f1f1;
+        font-size: 12px;
+      }
+
+      .omniview-anima-action-links {
+        display: flex;
+        align-items: center;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        font-family: Mulish, sans-serif;
+        transition: all 0.5s ease-in-out;
+        opacity: 1;
+      }
+
+      .omniview-anima-action-links > * + * {
+        margin-right: 0;
+        margin-left: 10px;
+      }
+
+      .idle {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      #popoverOpener {
+        position: absolute;
+        left: 50%;
+        margin-left: -10vw;
+        text-align: center;
+        top: 45vh;
+        width: 20vw;
+      }
+
+      .popover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1060;
+        display: none;
+        font-family: "sans-serif";
+        font-size: 14px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .popover.top {
+        margin-top: -12px;
+      }
+
+      .popover.right {
+        margin-left: 10px;
+      }
+
+      .popover.bottom {
+        margin-top: 10px;
+      }
+
+      .popover.left {
+        margin-left: -10px;
+      }
+
+      .popover-title {
+        padding: 8px 14px;
+        margin: 0;
+        font-size: 14px;
+        background-color: #f7f7f7;
+        border-bottom: 1px solid #ebebeb;
+        border-radius: 5px 5px 0 0;
+      }
+
+      .popover-content {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        overflow: hidden;
+        font-family: Mulish, sans-serif;
+      }
+
+      .popover > .arrow,
+      .popover > .arrow:after {
+        position: absolute;
+        display: block;
+        width: 0;
+        height: 0;
+        border-color: transparent;
+        border-style: solid;
+      }
+
+      .popover > .arrow {
+        border-width: 11px;
+      }
+
+      .popover > .arrow:after {
+        content: "";
+        border-width: 10px;
+      }
+
+      .popover.top > .arrow {
+        bottom: -11px;
+        left: 50%;
+        margin-left: -11px;
+        border-top-color: #999;
+        border-top-color: rgba(0, 0, 0, 0.25);
+        border-bottom-width: 0;
+      }
+
+      .popover.top > .arrow:after {
+        bottom: 1px;
+        margin-left: -10px;
+        content: " ";
+        border-top-color: #fff;
+        border-bottom-width: 0;
+      }
+
+      .popover.right > .arrow {
+        top: 50%;
+        left: -11px;
+        margin-top: -11px;
+        border-right-color: #999;
+        border-right-color: rgba(0, 0, 0, 0.25);
+        border-left-width: 0;
+      }
+
+      .popover.right > .arrow:after {
+        bottom: -10px;
+        left: 1px;
+        content: " ";
+        border-right-color: #fff;
+        border-left-width: 0;
+      }
+
+      .popover.bottom > .arrow {
+        top: -11px;
+        left: 50%;
+        margin-left: -11px;
+        border-top-width: 0;
+        border-bottom-color: #999;
+        border-bottom-color: rgba(0, 0, 0, 0.25);
+      }
+
+      .popover.bottom > .arrow:after {
+        top: 1px;
+        margin-left: -10px;
+        content: " ";
+        border-top-width: 0;
+        border-bottom-color: #fff;
+      }
+
+      .popover.left > .arrow {
+        top: 50%;
+        right: -11px;
+        margin-top: -11px;
+        border-right-width: 0;
+        border-left-color: #999;
+        border-left-color: rgba(0, 0, 0, 0.25);
+      }
+
+      .popover.left > .arrow:after {
+        right: 1px;
+        bottom: -10px;
+        content: " ";
+        border-right-width: 0;
+        border-left-color: #fff;
+      }
+
+      #anima-comment-popover,
+      #anima-code-popover {
+        background: #333333;
+        color: #fff;
+      }
+
+      #anima-comment-popover.top > .arrow,
+      #anima-comment-popover.top > .arrow:after,
+      #anima-code-popover.top > .arrow:after,
+      #anima-code-popover.top > .arrow {
+        border-top-color: #333;
+      }
+
+      #anima-comment-popover .btn,
+      #anima-code-popover .btn {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 6px 20px;
+        background: #ff6250;
+        color: #fff;
+        border-radius: 100px;
+        width: max-content;
+        text-decoration: none;
+      }
+
+      @media screen and (max-width: 550px) {
+        #anima-watermark-link {
+          padding: 6px !important;
+        }
+        #anima-watermark-link .text {
+          display: none !important;
+        }
+      }
+
+      .ellipse-2-tcZojf,
+      .ellipse-3-tcZojf,
+      .ellipse-4-tcZojf,
+      .ellipse-5-tcZojf,
+      .ellipse-6-tcZojf {
+        filter: blur(59px);
+      }
+      .blister-Ys8k0x.blister.inter-black-white-24px,
+      .frame-1707482690-Ys8k0x.frame-1707482690,
+      .frame-1707482691-Ys8k0x,
+      .frame-1707482701-Ys8k0x,
+      .frame-1707482702-Ys8k0x,
+      .frame-1707482703-Ys8k0x,
+      .frame-1707482704-Ys8k0x,
+      .frame-1707482713-Ys8k0x,
+      .frame-1707482713-hmgRUf {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body
+    style="margin: 0px; background: rgb(0, 0, 0); overflow-x: hidden"
+    dark-scroll=""
+  >
+    <div class="main">
+      <input type="hidden" id="anPageName" name="page" value="desktop-1" />
+      <div class="container-center-horizontal">
+        <div class="desktop-1 screen" data-id="1:3">
+          <div class="frame-1-Ys8k0x" data-id="1:4">
+            <div class="ellipse-2-tcZojf" data-id="1:7"></div>
+            <div class="ellipse-3-tcZojf" data-id="1:8"></div>
+            <div class="ellipse-4-tcZojf" data-id="1:9"></div>
+            <div class="ellipse-5-tcZojf" data-id="1:10"></div>
+            <div class="ellipse-6-tcZojf" data-id="1:11"></div>
+          </div>
+          <div class="ellipse-1-Ys8k0x" data-id="1:6"></div>
+          <div
+            class="blister-Ys8k0x blister inter-black-white-24px"
+            data-id="1:12"
+          >
+            Blister
+          </div>
+          <div class="frame-1707482690-Ys8k0x frame-1707482690" data-id="1:14">
+            <div
+              class="home-page valign-text-middle inter-semi-bold-white-15px"
+              data-id="1:15"
+            >
+              Home page
+            </div>
+            <div
+              class="download valign-text-middle inter-semi-bold-white-15px"
+              data-id="1:16"
+            >
+              Download
+            </div>
+            <div
+              class="message valign-text-middle inter-semi-bold-white-15px"
+              data-id="1:17"
+            >
+              message
+            </div>
+            <div
+              class="help valign-text-middle inter-semi-bold-white-15px"
+              data-id="1:18"
+            >
+              help
+            </div>
+            <div
+              class="join-us valign-text-middle inter-semi-bold-white-15px"
+              data-id="1:19"
+            >
+              Join us
+            </div>
+            <div
+              class="joiasan-us valign-text-middle inter-semi-bold-white-15px"
+              data-id="1:20"
+            >
+              Joiasan us
+            </div>
+          </div>
+          <div class="ellipse-7-Ys8k0x ellipse-7" data-id="11:71"></div>
+          <div class="ellipse-8-Ys8k0x ellipse-8" data-id="12:114"></div>
+          <p
+            class="people-have-always-b-Ys8k0x valign-text-middle people-have-always-b inter-semi-bold-white-15px"
+            data-id="1:23"
+          >
+            People have always been closely related to nature, and stacking is a
+            natural phenomenon, so people, nature and stacking are connected
+            with each other. So，Stacking is not only the result of the
+            years,but also a kind of common man and nature.
+          </p>
+          <p
+            class="people-have-always-b-V3rtYt valign-text-middle people-have-always-b inter-semi-bold-white-15px"
+            data-id="1:88"
+          >
+            People have always been closely related to nature, and stacking is a
+            natural phenomenon, so people, nature and stacking are connected
+            with each other. So，Stacking is not only the result of the
+            years,but also a kind of common man and nature.
+          </p>
+          <p
+            class="people-have-always-b-InqUpZ valign-text-middle people-have-always-b inter-semi-bold-white-15px"
+            data-id="9:40"
+          >
+            People have always been closely related to nature, and stacking is a
+            natural phenomenon, so people, nature and stacking are connected
+            with each other. So，Stacking is not only the result of the
+            years,but also a kind of common man and nature.
+          </p>
+          <p
+            class="people-have-always-b-EAe9Rz valign-text-middle people-have-always-b inter-light-white-15px"
+            data-id="12:77"
+          >
+            People have always been closely related to nature, and stacking is a
+            natural phenomenon, so people, nature and stacking are connected
+            with each other. So，Stacking is not only the result of the
+            years,but also a kind of common man and nature.
+          </p>
+          <p
+            class="people-have-always-b-VeL0R0 valign-text-middle people-have-always-b inter-semi-bold-white-15px"
+            data-id="1:92"
+          >
+            People have always been closely related to nature
+          </p>
+          <div
+            class="people-have-always-Ys8k0x valign-text-middle people-have-always inter-semi-bold-white-15px"
+            data-id="11:70"
+          >
+            People have always
+          </div>
+          <div
+            class="investment-amont-Ys8k0x valign-text-middle inter-black-white-24px"
+            data-id="12:73"
+          >
+            Investment Amont
+          </div>
+          <div
+            class="please-note-Ys8k0x valign-text-middle inter-black-white-24px"
+            data-id="12:76"
+          >
+            Please note
+          </div>
+          <div
+            class="investment-durstion-Ys8k0x valign-text-middle inter-black-white-24px"
+            data-id="12:74"
+          >
+            Investment Durstion
+          </div>
+          <p
+            class="people-have-always-b-WYxxqV valign-text-middle people-have-always-b inter-semi-bold-white-15px"
+            data-id="9:36"
+          >
+            People have always been closely related to nature
+          </p>
+          <p
+            class="in-nature-stacking-i-Ys8k0x valign-text-middle in-nature-stacking-i inter-semi-bold-white-15px"
+            data-id="1:89"
+          >
+            In nature, stacking is very common, such as ant mounds, beehives,
+            bird's nests,&nbsp;&nbsp;are built by stacking. Rock formations and
+            glaciers are also formed layer by layer. In terms of artistic
+            expression, staking is also an important form.By stacking objects or
+            elements layer by layer, depth and layers can be created visually.
+            This effect can increase the three-dimensional and perspective of
+            the work, making it more vivid and attractive.<br />In terms of
+            history, we can find traces of stacks, such as pyramids, ancient
+            Babylonian gardens, etc.
+          </p>
+          <div class="building-the-future-Ys8k0x" data-id="1:22">
+            BUILDING<br />THE<br />FUTURE
+          </div>
+          <div class="frame-1707482691-Ys8k0x" data-id="1:25">
+            <div
+              class="get-started-tAOFAC valign-text-middle get-started inter-semi-bold-white-15px"
+              data-id="1:24"
+            >
+              Get&nbsp;&nbsp;started
+            </div>
+          </div>
+          <div class="frame-1707482701-Ys8k0x" data-id="1:90">
+            <div
+              class="get-hitstory valign-text-middle inter-semi-bold-white-15px"
+              data-id="1:91"
+            >
+              Get Hitstory
+            </div>
+          </div>
+          <div class="frame-1707482713-Ys8k0x" data-id="13:149">
+            <div
+              class="get-hitstory valign-text-middle inter-semi-bold-white-15px"
+              data-id="13:150"
+            >
+              Get Hitstory
+            </div>
+          </div>
+          <div class="frame-1707482692-Ys8k0x" data-id="1:26">
+            <div
+              class="people-have-always-N8UImP valign-text-middle people-have-always inter-semi-bold-white-15px"
+              data-id="1:27"
+            >
+              People have always
+            </div>
+          </div>
+          <div class="frame-1707482693-Ys8k0x" data-id="1:28">
+            <div
+              class="people-have-always-f9AdJq valign-text-middle people-have-always inter-semi-bold-white-15px"
+              data-id="1:29"
+            >
+              People have always
+            </div>
+          </div>
+          <div class="frame-1707482694-Ys8k0x" data-id="1:30">
+            <p
+              class="kind-of-common-man-and-nature-phRDXa valign-text-middle inter-semi-bold-white-15px"
+              data-id="1:31"
+            >
+              kind of common man and nature
+            </p>
+          </div>
+          <div class="the-roadmap-Ys8k0x inter-black-white-36px" data-id="1:32">
+            THE ROADMAP
+          </div>
+          <img
+            class="profit-calculator-Ys8k0x"
+            data-id="12:97"
+            src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/profit-calculator@2x.png"
+            anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/profit-calculator@2x.png"
+            alt="PROFIT CALCULATOR"
+          />
+          <div class="x100-Ys8k0x inter-black-white-48px" data-id="12:72">
+            100
+          </div>
+          <div
+            class="get-started-Ys8k0x get-started inter-black-white-36px"
+            data-id="12:115"
+          >
+            GET STARTED
+          </div>
+          <div class="steps-to-get-started-Ys8k0x" data-id="13:146">
+            Steps To Get Started
+          </div>
+          <div class="how-does-work-Ys8k0x" data-id="13:147">
+            HOW DOES WORK?
+          </div>
+          <div class="x40-days-Ys8k0x inter-black-white-48px" data-id="12:75">
+            40 Days
+          </div>
+          <img
+            class="frame-1707482695-Ys8k0x"
+            data-id="1:33"
+            src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/frame-1707482695.svg"
+            anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/frame-1707482695.svg"
+            alt="Frame 1707482695"
+          /><img
+            class="frame-1707482696-Ys8k0x"
+            data-id="1:47"
+            src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/frame-1707482696.svg"
+            anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/frame-1707482696.svg"
+            alt="Frame 1707482696"
+          /><img
+            class="frame-1707482697-Ys8k0x"
+            data-id="1:61"
+            src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/frame-1707482697.svg"
+            anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/frame-1707482697.svg"
+            alt="Frame 1707482697"
+          />
+          <div
+            class="brief-introduction-Ys8k0x brief-introduction inter-black-white-32px"
+            data-id="1:75"
+          >
+            Brief Introduction
+          </div>
+          <div class="investment-offers-Ys8k0x" data-id="9:38">
+            Investment Offers 1
+          </div>
+          <div class="frame-1707482705-Ys8k0x" data-id="9:46">
+            <div class="ellipse-7-hLsHo9 ellipse-7" data-id="9:41"></div>
+            <div class="your-total-profit-hLsHo9" data-id="9:42">
+              Your Total<br />Profit
+            </div>
+            <div class="usd-hLsHo9" data-id="9:44">USD</div>
+            <h1 class="title-hLsHo9" data-id="9:43">200</h1>
+          </div>
+          <div class="frame-1707482698-Ys8k0x" data-id="1:76">
+            <p
+              class="connected-with-each valign-text-middle inter-semi-bold-white-15px"
+              data-id="1:77"
+            >
+              connected with each other. So，Stacking is not only the result of
+              the years,but also a kind of common man and nature.
+            </p>
+            <p
+              class="connected-with-each-other-so valign-text-middle inter-semi-bold-white-11px"
+              data-id="1:78"
+            >
+              connected with each other. So，
+            </p>
+            <div
+              class="jan-20-jan21-xTMWcx inter-black-white-32px"
+              data-id="1:79"
+            >
+              JAN 20<br />&nbsp;&nbsp;-JAN21
+            </div>
+          </div>
+          <div class="frame-1707482699-Ys8k0x" data-id="1:80">
+            <p
+              class="connected-with-each valign-text-middle inter-semi-bold-white-15px"
+              data-id="1:81"
+            >
+              connected with each other. So，Stacking is not only the result of
+              the years,but also a kind of common man and nature.
+            </p>
+            <p
+              class="connected-with-each-other-so valign-text-middle inter-semi-bold-white-11px"
+              data-id="1:82"
+            >
+              connected with each other. So，
+            </p>
+            <div
+              class="feb-21-may-21-huINLR inter-black-white-32px"
+              data-id="1:83"
+            >
+              FEB 21-<br />
+              MAY 21
+            </div>
+          </div>
+          <div class="frame-1707482700-Ys8k0x" data-id="1:84">
+            <p
+              class="connected-with-each valign-text-middle inter-semi-bold-white-15px"
+              data-id="1:85"
+            >
+              connected with each other. So，Stacking is not only the result of
+              the years,but also a kind of common man and nature.
+            </p>
+            <p
+              class="connected-with-each-other-so valign-text-middle inter-semi-bold-white-11px"
+              data-id="1:86"
+            >
+              connected with each other. So，
+            </p>
+            <p
+              class="july-21-dec-21-xu22mU inter-black-white-32px"
+              data-id="1:87"
+            >
+              JULY 21-<br />&nbsp;&nbsp;DEC 21
+            </p>
+          </div>
+          <img
+            class="line-1-Ys8k0x line-1"
+            data-id="1:93"
+            src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-1.svg"
+            anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-1.svg"
+            alt="Line 1"
+          /><img
+            class="line-2-Ys8k0x line-2"
+            data-id="9:39"
+            src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-2.svg"
+            anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-2.svg"
+            alt="Line 2"
+          />
+          <div class="frame-1707482702-Ys8k0x" data-id="1:94">
+            <div class="rectangle-1-a1T2lK" data-id="1:95"></div>
+            <div class="curious-plan inter-black-white-20px" data-id="4:2">
+              CURIOUS PLAN
+            </div>
+            <div
+              class="brief-introduction-a1T2lK brief-introduction inter-black-white-10px"
+              data-id="5:3"
+            >
+              Brief Introduction
+            </div>
+            <div
+              class="brief-introduction-zXTITx brief-introduction inter-black-white-10px"
+              data-id="6:10"
+            >
+              Brief Introduction
+            </div>
+            <div
+              class="introduction-a1T2lK introduction inter-light-white-10px"
+              data-id="5:6"
+            >
+              Introduction
+            </div>
+            <div
+              class="introduction-zXTITx introduction inter-light-white-10px"
+              data-id="6:7"
+            >
+              Introduction
+            </div>
+            <div
+              class="brief-a1T2lK brief inter-light-white-10px"
+              data-id="5:5"
+            >
+              Brief
+            </div>
+            <div
+              class="brief-zXTITx brief inter-light-white-10px"
+              data-id="6:8"
+            >
+              Brief
+            </div>
+            <img
+              class="line-1-a1T2lK line-1"
+              data-id="5:4"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-1-1.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-1-1.svg"
+              alt="Line 1"
+            /><img
+              class="line-2-a1T2lK line-2"
+              data-id="6:9"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-2-1.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-2-1.svg"
+              alt="Line 2"
+            />
+            <div class="x5-a1T2lK x5 inter-black-white-64px" data-id="6:11">
+              5%
+            </div>
+            <div class="wntes-a1T2lK inter-black-white-20px" data-id="6:35">
+              WNTES
+            </div>
+          </div>
+          <div class="frame-1707482703-Ys8k0x" data-id="6:12">
+            <div class="curious-plan inter-black-white-20px" data-id="6:14">
+              CURIOUS PLAN
+            </div>
+            <div
+              class="brief-introduction-deluzH brief-introduction inter-black-white-10px"
+              data-id="6:15"
+            >
+              Brief Introduction
+            </div>
+            <div
+              class="brief-introduction-CDn2VF brief-introduction inter-black-white-10px"
+              data-id="6:16"
+            >
+              Brief Introduction
+            </div>
+            <div
+              class="introduction-deluzH introduction inter-light-white-10px"
+              data-id="6:17"
+            >
+              Introduction
+            </div>
+            <div
+              class="introduction-CDn2VF introduction inter-light-white-10px"
+              data-id="6:18"
+            >
+              Introduction
+            </div>
+            <div
+              class="brief-deluzH brief inter-light-white-10px"
+              data-id="6:19"
+            >
+              Brief
+            </div>
+            <div
+              class="brief-CDn2VF brief inter-light-white-10px"
+              data-id="6:20"
+            >
+              Brief
+            </div>
+            <img
+              class="line-1-deluzH line-1"
+              data-id="6:21"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-1-2.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-1-2.svg"
+              alt="Line 1"
+            /><img
+              class="line-2-deluzH line-2"
+              data-id="6:22"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-2-2.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-2-2.svg"
+              alt="Line 2"
+            />
+            <div class="x7-deluzH x7 inter-black-white-64px" data-id="6:23">
+              7%
+            </div>
+          </div>
+          <div class="frame-1707482704-Ys8k0x" data-id="6:24">
+            <div class="curious-plan inter-black-white-20px" data-id="6:25">
+              CURIOUS PLAN
+            </div>
+            <div
+              class="brief-introduction-Bj2mhg brief-introduction inter-black-white-10px"
+              data-id="6:26"
+            >
+              Brief Introduction
+            </div>
+            <div
+              class="brief-introduction-INvLfM brief-introduction inter-black-white-10px"
+              data-id="6:27"
+            >
+              Brief Introduction
+            </div>
+            <div
+              class="introduction-Bj2mhg introduction inter-light-white-10px"
+              data-id="6:28"
+            >
+              Introduction
+            </div>
+            <div
+              class="introduction-INvLfM introduction inter-light-white-10px"
+              data-id="6:29"
+            >
+              Introduction
+            </div>
+            <div
+              class="brief-Bj2mhg brief inter-light-white-10px"
+              data-id="6:30"
+            >
+              Brief
+            </div>
+            <div
+              class="brief-INvLfM brief inter-light-white-10px"
+              data-id="6:31"
+            >
+              Brief
+            </div>
+            <img
+              class="line-1-Bj2mhg line-1"
+              data-id="6:32"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-1-3.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-1-3.svg"
+              alt="Line 1"
+            /><img
+              class="line-2-Bj2mhg line-2"
+              data-id="6:33"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-2-3.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-2-3.svg"
+              alt="Line 2"
+            />
+            <div class="x9-Bj2mhg inter-black-white-64px" data-id="6:34">
+              9%
+            </div>
+          </div>
+          <div class="frame-1707482706-Ys8k0x" data-id="9:47">
+            <p
+              class="dally-proft-5-usd valign-text-middle inter-semi-bold-white-15px-2"
+              data-id="9:48"
+            >
+              Dally
+              proft&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5USD
+            </p>
+          </div>
+          <div class="frame-1707482707-Ys8k0x" data-id="10:49">
+            <p
+              class="dally-proft-5-usd valign-text-middle inter-semi-bold-white-15px-2"
+              data-id="10:50"
+            >
+              Dally
+              proft&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5USD
+            </p>
+          </div>
+          <div class="frame-1707482708-Ys8k0x" data-id="10:51">
+            <p
+              class="dally-proft-5-usd valign-text-middle inter-semi-bold-white-15px-2"
+              data-id="10:52"
+            >
+              Dally
+              proft&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5USD
+            </p>
+          </div>
+          <div class="frame-1707482709-Ys8k0x" data-id="10:53">
+            <p
+              class="dally-proft-5-usd valign-text-middle inter-semi-bold-white-15px-2"
+              data-id="10:54"
+            >
+              Dally
+              proft&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5USD
+            </p>
+          </div>
+          <img
+            class="line-3-Ys8k0x"
+            data-id="10:57"
+            src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-3.svg"
+            anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-3.svg"
+            alt="Line 3"
+          />
+          <div class="frame-1707482710-Ys8k0x" data-id="13:127">
+            <img
+              class="vector"
+              data-id="12:122"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector.svg"
+              alt="Vector"
+            />
+            <div class="x1-xxpoKa x1 inter-black-white-48px" data-id="12:123">
+              1
+            </div>
+            <div
+              class="register-your-account inter-black-white-20px"
+              data-id="13:125"
+            >
+              Register Your Account
+            </div>
+            <div class="ellipse-9-xxpoKa ellipse-9" data-id="13:124"></div>
+            <p
+              class="people-have-always-b-xxpoKa valign-text-middle people-have-always-b inter-medium-white-15px"
+              data-id="13:126"
+            >
+              People have always been closely related to nature, and stacking is
+              a natural phenomenon, so people, nature and stacking are connected
+              with each other. So，Stacking is not only the result of the years
+            </p>
+          </div>
+          <p
+            class="people-have-always-b-UALfzy valign-text-middle people-have-always-b inter-light-white-15px"
+            data-id="13:148"
+          >
+            People have always been closely related to nature, and stacking is a
+            natural phenomenon, so people, nature and stacking are connected
+            with each other.
+          </p>
+          <div class="frame-1707482711-Ys8k0x" data-id="13:134">
+            <img
+              class="vector"
+              data-id="13:135"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-1.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-1.svg"
+              alt="Vector"
+            />
+            <div class="x2-izREch x2 inter-black-white-48px" data-id="13:136">
+              2
+            </div>
+            <div
+              class="register-your-account inter-black-white-20px"
+              data-id="13:137"
+            >
+              Register Your Account
+            </div>
+            <div class="ellipse-9-izREch ellipse-9" data-id="13:138"></div>
+            <p
+              class="people-have-always-b-izREch valign-text-middle people-have-always-b inter-medium-white-15px"
+              data-id="13:139"
+            >
+              People have always been closely related to nature, and stacking is
+              a natural phenomenon, so people, nature and stacking are connected
+              with each other. So，Stacking is not only the result of the years
+            </p>
+          </div>
+          <div class="frame-1707482712-Ys8k0x" data-id="13:140">
+            <img
+              class="vector"
+              data-id="13:141"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-2.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-2.svg"
+              alt="Vector"
+            />
+            <div class="x3-T061V0 x3 inter-black-white-48px" data-id="13:142">
+              3
+            </div>
+            <div
+              class="register-your-account inter-black-white-20px"
+              data-id="13:143"
+            >
+              Register Your Account
+            </div>
+            <div class="ellipse-9-T061V0 ellipse-9" data-id="13:144"></div>
+            <p
+              class="people-have-always-b-T061V0 valign-text-middle people-have-always-b inter-medium-white-15px"
+              data-id="13:145"
+            >
+              People have always been closely related to nature, and stacking is
+              a natural phenomenon, so people, nature and stacking are connected
+              with each other. So，Stacking is not only the result of the years
+            </p>
+          </div>
+          <div class="slideParent">
+            <div
+              class="wajahat-slide-card frame-1707482713-V3rtYt first slider-active"
+              data-id="13:151"
+            >
+              <p
+                class="people-have-always-b-ukvwPE valign-text-middle people-have-always-b inter-light-white-15px"
+                data-id="13:154"
+              >
+                People have always been closely related to nature, and stacking
+                is a natural phenomenon, so people, nature and stacking are
+                connected with each other.
+              </p>
+              <div
+                class="protected-transaction-ukvwPE protected-transaction inter-black-white-20px"
+                data-id="13:153"
+              >
+                Protected<br />Transaction
+              </div>
+            </div>
+            <div
+              class="frame-1707482713-V3rtYt second wajahat-slide-card"
+              data-id="13:151"
+            >
+              <p
+                class="people-have-always-b-ukvwPE valign-text-middle people-have-always-b inter-light-white-15px"
+                data-id="13:154"
+              >
+                People have always been closely related to nature, and stacking
+                is a natural phenomenon, so people, nature and stacking are
+                connected with each other.
+              </p>
+              <div
+                class="protected-transaction-ukvwPE protected-transaction inter-black-white-20px"
+                data-id="13:153"
+              >
+                Protected<br />Transaction
+              </div>
+            </div>
+            <div
+              class="frame-1707482713-V3rtYt third wajahat-slide-card"
+              data-id="13:151"
+            >
+              <p
+                class="people-have-always-b-ukvwPE valign-text-middle people-have-always-b inter-light-white-15px"
+                data-id="13:154"
+              >
+                People have always been closely related to nature, and stacking
+                is a natural phenomenon, so people, nature and stacking are
+                connected with each other.
+              </p>
+              <div
+                class="protected-transaction-ukvwPE protected-transaction inter-black-white-20px"
+                data-id="13:153"
+              >
+                Protected<br />Transaction
+              </div>
+            </div>
+            <div
+              class="frame-1707482713-V3rtYt fourth wajahat-slide-card"
+              data-id="13:151"
+            >
+              <p
+                class="people-have-always-b-ukvwPE valign-text-middle people-have-always-b inter-light-white-15px"
+                data-id="13:154"
+              >
+                People have always been closely related to nature, and stacking
+                is a natural phenomenon, so people, nature and stacking are
+                connected with each other.
+              </p>
+              <div
+                class="protected-transaction-ukvwPE protected-transaction inter-black-white-20px"
+                data-id="13:153"
+              >
+                Protected<br />Transaction
+              </div>
+            </div>
+          </div>
+          <div class="frame-1707482716-Ys8k0x" data-id="13:161">
+            <p
+              class="people-have-always-b-uxWwwM valign-text-middle people-have-always-b inter-light-white-15px"
+              data-id="13:162"
+            >
+              People have always been closely related to nature, and stacking is
+              a natural phenomenon, so people, nature and stacking are connected
+              with each other.
+            </p>
+            <div
+              class="program-benefits-uxWwwM inter-black-white-32px"
+              data-id="13:163"
+            >
+              PROGRAM<br />BENEFITS
+            </div>
+            <div class="x16-uxWwwM" data-id="13:164">1/6</div>
+            <img
+              class="arrow-1-uxWwwM"
+              data-id="13:165"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/arrow-1.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/arrow-1.svg"
+              alt="Arrow 1"
+            /><img
+              class="arrow-2-uxWwwM"
+              data-id="13:166"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/arrow-2.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/arrow-2.svg"
+              alt="Arrow 2"
+            />
+          </div>
+
+          <div
+            class="frame-1707482717-Ys8k0x frame-1707482717"
+            data-id="13:183"
+          >
+            <div
+              class="ellipse-tLWxGC-wajahat ellipse-14-tLWxGC ellipse-14"
+              data-id="23:223"
+            ></div>
+            <div
+              class="ellipse-tLWxGC-wajahat ellipse-11-tLWxGC"
+              data-id="13:184"
+            ></div>
+            <div
+              class="ellipse-tLWxGC-wajahat ellipse-12-tLWxGC"
+              data-id="13:185"
+            ></div>
+            <div
+              class="ellipse-tLWxGC-wajahat ellipse-13-tLWxGC"
+              data-id="13:186"
+            ></div>
+          </div>
+          <div class="frame-1707482723-Ys8k0x" data-id="23:217">
+            <div
+              class="affiliate-programs-y9cckG inter-black-white-32px"
+              data-id="13:187"
+            >
+              AFFILIATE PROGRAMS
+            </div>
+            <div
+              class="standard-referral-y9cckG inter-black-white-16px"
+              data-id="18:205"
+            >
+              STANDARD<br />REFERRAL
+            </div>
+            <div
+              class="global-representative-y9cckG inter-black-white-16px"
+              data-id="18:206"
+            >
+              GLOBAL<br />REPRESENTATIVE
+            </div>
+            <div class="comission-levels-y9cckG" data-id="23:216">
+              COMISSION<br />LEVELS
+            </div>
+            <div class="frame-1707482722-y9cckG" data-id="23:209">
+              <div class="x1-GZxgbX x1 inter-black-white-16px" data-id="23:208">
+                1
+              </div>
+              <div class="x2-GZxgbX x2 inter-black-white-16px" data-id="23:210">
+                2
+              </div>
+              <div class="x3-GZxgbX x3 inter-black-white-16px" data-id="23:211">
+                3
+              </div>
+              <div class="x4-GZxgbX inter-black-white-16px" data-id="23:212">
+                4
+              </div>
+              <div class="x5-GZxgbX x5 inter-black-white-16px" data-id="23:213">
+                5
+              </div>
+              <div class="x6-GZxgbX inter-black-white-16px" data-id="23:214">
+                6
+              </div>
+              <div class="x7-GZxgbX x7 inter-black-white-16px" data-id="23:215">
+                7
+              </div>
+            </div>
+            <img
+              class="vector-14-y9cckG"
+              data-id="13:188"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-14.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-14.svg"
+              alt="Vector 14"
+            /><img
+              class="vector-15-y9cckG"
+              data-id="13:189"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-15.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-15.svg"
+              alt="Vector 15"
+            /><img
+              class="line-4-y9cckG"
+              data-id="17:195"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-4.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-4.svg"
+              alt="Line 4"
+            /><img
+              class="line-6-y9cckG"
+              data-id="18:197"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-6.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-6.svg"
+              alt="Line 6"
+            /><img
+              class="line-7-y9cckG"
+              data-id="18:201"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-7.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-7.svg"
+              alt="Line 7"
+            /><img
+              class="line-5-y9cckG"
+              data-id="18:196"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-5.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-5.svg"
+              alt="Line 5"
+            />
+            <div class="frame-1707482718-y9cckG" data-id="13:191">
+              <div class="ellipse-10-d5uGhL ellipse-10" data-id="13:182"></div>
+              <div class="x5-d5uGhL x5 inter-black-black-16px" data-id="13:190">
+                5%
+              </div>
+            </div>
+            <div class="frame-1707482720-y9cckG" data-id="18:198">
+              <div class="ellipse-10-ZvkIjl ellipse-10" data-id="18:199"></div>
+              <div class="x5-ZvkIjl x5 inter-black-black-16px" data-id="18:200">
+                5%
+              </div>
+            </div>
+            <div class="frame-1707482721-y9cckG" data-id="18:202">
+              <div class="ellipse-10-4jDom3 ellipse-10" data-id="18:203"></div>
+              <div class="x5-4jDom3 x5 inter-black-black-16px" data-id="18:204">
+                5%
+              </div>
+            </div>
+            <div class="frame-1707482719-y9cckG" data-id="13:192">
+              <div class="ellipse-10-qI3DU5 ellipse-10" data-id="13:193"></div>
+              <div class="x5-qI3DU5 x5 inter-black-black-16px" data-id="13:194">
+                5%
+              </div>
+            </div>
+          </div>
+          <div class="frame-1707482724-Ys8k0x" data-id="23:231">
+            <div class="frame-1707482713-hmgRUf" data-id="23:229">
+              <div
+                class="get-hitstory valign-text-middle inter-semi-bold-white-15px"
+                data-id="23:230"
+              >
+                Get Hitstory
+              </div>
+            </div>
+            <div
+              class="frame-1707482717-hmgRUf frame-1707482717"
+              data-id="23:224"
+            >
+              <div class="ellipse-14-gp7iUl ellipse-14" data-id="23:225"></div>
+              <div class="ellipse-11-gp7iUl" data-id="23:226"></div>
+              <div class="ellipse-12-gp7iUl" data-id="23:227"></div>
+              <div class="ellipse-13-gp7iUl" data-id="23:228"></div>
+            </div>
+            <p
+              class="in-nature-stacking-i-hmgRUf valign-text-middle in-nature-stacking-i inter-light-white-15px"
+              data-id="23:221"
+            >
+              In nature, stacking is very common, such as ant mounds, beehives,
+              bird's nests,&nbsp;&nbsp;are built by stacking. Rock formations
+              and glaciers are also formed layer by layer. In terms of artistic
+              expression, staking is also an important form.By stacking objects
+              or elements layer by layer, depth and layers <br /><br />In terms
+              of history, we can find traces of stacks, such as pyramids,
+              ancient Babylonian gardens, etc.
+            </p>
+            <div class="flex-container-23222-hmgRUf" data-id="23:222-container">
+              <div
+                class="text0-23222-ZMIhtR valign-text-middle inter-light-white-15px"
+                data-id="23:222-text0"
+              >
+                <span
+                  ><span class="span0-0Km4Fo inter-light-white-15px"
+                    >In nature, stacking is very common, <br /></span
+                ></span>
+              </div>
+              <div
+                class="text1-23222-ZMIhtR valign-text-middle inter-light-white-15px"
+                data-id="23:222-text1"
+              >
+                <span
+                  ><span class="span1-ChCMfK inter-light-white-15px"
+                    >such as ant mounds, beehives, bird's nests,&nbsp;&nbsp;are
+                    built by stacking. <br /></span
+                ></span>
+              </div>
+              <div
+                class="text2-23222-ZMIhtR valign-text-middle inter-light-white-15px"
+                data-id="23:222-text2"
+              >
+                <span
+                  ><span class="span2-m2Laaf inter-light-white-15px"
+                    >Rock formations and glaciers are also formed layer by
+                    layer. <br /></span
+                ></span>
+              </div>
+              <div
+                class="text3-23222-ZMIhtR valign-text-middle inter-light-white-15px"
+                data-id="23:222-text3"
+              >
+                <span
+                  ><span class="span3-50LjnW inter-light-white-15px"
+                    >In terms of artistic expression, staking is also an
+                    important form.<br /></span
+                ></span>
+              </div>
+              <div
+                class="text4-23222-ZMIhtR valign-text-middle inter-light-white-15px"
+                data-id="23:222-text4"
+              >
+                <span
+                  ><span class="span4-shW95v inter-light-white-15px"></span
+                ></span>
+              </div>
+            </div>
+            <div class="what-is-an-affiliate-hmgRUf" data-id="23:218">
+              WHAT IS<br />AN<br />AFFILIATE
+            </div>
+            <img
+              class="line-8-hmgRUf"
+              data-id="23:219"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-8.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-8.svg"
+              alt="Line 8"
+            />
+          </div>
+          <div class="frame-1707482725-Ys8k0x" data-id="24:259">
+            <div class="frame-1707482713-x3pRfk" data-id="23:234">
+              <div
+                class="x54-VdkRZL valign-text-middle inter-semi-bold-white-32px-2"
+                data-id="23:235"
+              >
+                54
+              </div>
+              <div
+                class="hitstory valign-text-middle inter-semi-bold-white-15px"
+                data-id="23:236"
+              >
+                Hitstory
+              </div>
+              <div
+                class="buys valign-text-middle inter-semi-bold-white-15px"
+                data-id="23:237"
+              >
+                BUYS
+              </div>
+            </div>
+            <div class="frame-1707482714-x3pRfk" data-id="23:238">
+              <div
+                class="x6505-6NuCTM valign-text-middle inter-semi-bold-white-32px-2"
+                data-id="23:239"
+              >
+                6505
+              </div>
+              <div
+                class="hitstory valign-text-middle inter-semi-bold-white-15px"
+                data-id="23:240"
+              >
+                Hitstory
+              </div>
+              <div
+                class="buys valign-text-middle inter-semi-bold-white-15px"
+                data-id="23:241"
+              >
+                BUYS
+              </div>
+            </div>
+            <div class="frame-1707482715-x3pRfk" data-id="23:242">
+              <div
+                class="x552554196-eFxpDg valign-text-middle inter-semi-bold-white-32px-2"
+                data-id="23:243"
+              >
+                $5525541.96
+              </div>
+              <div
+                class="hitstory valign-text-middle inter-semi-bold-white-15px"
+                data-id="23:244"
+              >
+                Hitstory
+              </div>
+              <div
+                class="buys valign-text-middle inter-semi-bold-white-15px"
+                data-id="23:245"
+              >
+                BUYS
+              </div>
+            </div>
+            <div class="frame-1707482716-x3pRfk" data-id="23:246">
+              <div
+                class="x708596325-sNsTgk valign-text-middle inter-semi-bold-white-32px-2"
+                data-id="23:247"
+              >
+                $7085963.25
+              </div>
+              <div
+                class="hitstory valign-text-middle inter-semi-bold-white-15px"
+                data-id="23:248"
+              >
+                Hitstory
+              </div>
+            </div>
+            <div
+              class="blister-statistics-x3pRfk inter-black-white-36px"
+              data-id="23:232"
+            >
+              BLISTER STATISTICS
+            </div>
+            <img
+              class="ellipse-15-x3pRfk"
+              data-id="23:250"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/ellipse-15.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/ellipse-15.svg"
+              alt="Ellipse 15"
+            /><img
+              class="ellipse-17-x3pRfk"
+              data-id="23:253"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/ellipse-17.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/ellipse-17.svg"
+              alt="Ellipse 17"
+            /><img
+              class="ellipse-16-x3pRfk"
+              data-id="23:251"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/ellipse-16.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/ellipse-16.svg"
+              alt="Ellipse 16"
+            />
+            <div class="ellipse-8-x3pRfk ellipse-8" data-id="23:252"></div>
+            <img
+              class="vector-16-x3pRfk"
+              data-id="24:255"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-16.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-16.svg"
+              alt="Vector 16"
+            /><img
+              class="vector-17-x3pRfk"
+              data-id="24:256"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-17.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-17.svg"
+              alt="Vector 17"
+            /><img
+              class="vector-18-x3pRfk"
+              data-id="24:257"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-18.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-18.svg"
+              alt="Vector 18"
+            /><img
+              class="vector-19-x3pRfk"
+              data-id="24:258"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-19.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/vector-19.svg"
+              alt="Vector 19"
+            /><img
+              class="ellipse-18-x3pRfk"
+              data-id="24:254"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/ellipse-18.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/ellipse-18.svg"
+              alt="Ellipse 18"
+            />
+          </div>
+          <div class="frame-1707482726-Ys8k0x" data-id="24:317">
+            <p
+              class="in-nature-stacking-i-VfyIAa valign-text-middle in-nature-stacking-i inter-light-white-15px"
+              data-id="24:316"
+            >
+              In nature, stacking is very common, such as ant mounds, beehives,
+              bird's nests,&nbsp;&nbsp;are built by stacking. Rock formations
+              and glaciers are also formed layer by layer. In terms of artistic
+              expression, staking is also an important form.By stacking objects
+              or elements layer by layer, depth and layersIn terms of history,
+              we can find traces of stacks, such as pyramids, ancient Babylonian
+              gardens, etc.
+            </p>
+            <div
+              class="blister-VfyIAa blister inter-black-white-36px"
+              data-id="24:315"
+            >
+              Blister
+            </div>
+            <div class="frame-1707482713-VfyIAa" data-id="24:261">
+              <img
+                class="exclamation-circle-outlined"
+                data-id="24:263"
+                src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/exclamationcircleoutlined.svg"
+                anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/exclamationcircleoutlined.svg"
+                alt="ExclamationCircleOutlined"
+              />
+              <div
+                class="recent-deposits valign-text-middle inter-semi-bold-white-32px"
+                data-id="24:262"
+              >
+                Recent Deposits
+              </div>
+            </div>
+            <div class="rectangle-3-VfyIAa" data-id="24:294"></div>
+            <div class="rectangle-4-VfyIAa" data-id="24:295"></div>
+            <div class="rectangle-2-VfyIAa" data-id="24:293"></div>
+            <div class="rectangle-5-VfyIAa" data-id="24:296"></div>
+            <div class="frame-1707482715-VfyIAa" data-id="24:272">
+              <div class="mufu10 valign-text-middle" data-id="24:276">
+                Mufu10
+              </div>
+              <div
+                class="x104000-usd-xRXbPZ valign-text-middle x104000-usd inter-semi-bold-white-32px"
+                data-id="24:280"
+              >
+                1040.00 USD
+              </div>
+              <div
+                class="x104000-usd-AdxWDO valign-text-middle x104000-usd inter-semi-bold-white-32px"
+                data-id="24:281"
+              >
+                1040.00 USD
+              </div>
+              <img
+                class="line-9-xRXbPZ line-9"
+                data-id="24:277"
+                src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-1.svg"
+                anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-1.svg"
+                alt="Line 9"
+              /><img
+                class="line-10"
+                data-id="24:278"
+                src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-1.svg"
+                anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-1.svg"
+                alt="Line 10"
+              /><img
+                class="line-11"
+                data-id="24:279"
+                src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-1.svg"
+                anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-1.svg"
+                alt="Line 11"
+              />
+              <div class="ellipse-8-xRXbPZ ellipse-8" data-id="24:282"></div>
+              <div
+                class="b-xRXbPZ valign-text-middle b inter-semi-bold-white-32px"
+                data-id="24:284"
+              >
+                B
+              </div>
+              <div class="ellipse-9-xRXbPZ ellipse-9" data-id="24:283"></div>
+              <div
+                class="l-xRXbPZ valign-text-middle inter-semi-bold-white-32px"
+                data-id="24:285"
+              >
+                L
+              </div>
+              <img
+                class="plus-circle-outlined-xRXbPZ plus-circle-outlined"
+                data-id="24:286"
+                src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/pluscircleoutlined.svg"
+                anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/pluscircleoutlined.svg"
+                alt="PlusCircleOutlined"
+              /><img
+                class="plus-circle-outlined-AdxWDO plus-circle-outlined"
+                data-id="24:291"
+                src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/pluscircleoutlined.svg"
+                anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/pluscircleoutlined.svg"
+                alt="PlusCircleOutlined"
+              />
+            </div>
+            <img
+              class="line-9-VfyIAa line-9"
+              data-id="24:313"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9.svg"
+              alt="Line 9"
+            />
+            <div class="frame-1707482716-VfyIAa" data-id="24:297">
+              <div class="mufu10 valign-text-middle" data-id="24:299">
+                Mufu10
+              </div>
+              <div
+                class="x104000-usd-FMFoCc valign-text-middle x104000-usd inter-semi-bold-white-32px"
+                data-id="24:300"
+              >
+                1040.00 USD
+              </div>
+              <div
+                class="x104000-usd-75OUdr valign-text-middle x104000-usd inter-semi-bold-white-32px"
+                data-id="24:301"
+              >
+                1040.00 USD
+              </div>
+              <img
+                class="line-9-FMFoCc line-9"
+                data-id="24:302"
+                src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-1.svg"
+                anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-1.svg"
+                alt="Line 9"
+              /><img
+                class="line-10"
+                data-id="24:303"
+                src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-1.svg"
+                anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-1.svg"
+                alt="Line 10"
+              /><img
+                class="line-11"
+                data-id="24:304"
+                src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-1.svg"
+                anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-1.svg"
+                alt="Line 11"
+              />
+              <div class="ellipse-8-FMFoCc ellipse-8" data-id="24:305"></div>
+              <div
+                class="b-FMFoCc valign-text-middle b inter-semi-bold-white-32px"
+                data-id="24:306"
+              >
+                B
+              </div>
+              <div class="ellipse-9-FMFoCc ellipse-9" data-id="24:307"></div>
+              <div
+                class="l-FMFoCc valign-text-middle inter-semi-bold-white-32px"
+                data-id="24:308"
+              >
+                L
+              </div>
+              <img
+                class="plus-circle-outlined-FMFoCc plus-circle-outlined"
+                data-id="24:309"
+                src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/pluscircleoutlined.svg"
+                anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/pluscircleoutlined.svg"
+                alt="PlusCircleOutlined"
+              /><img
+                class="plus-circle-outlined-75OUdr plus-circle-outlined"
+                data-id="24:311"
+                src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/pluscircleoutlined.svg"
+                anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/pluscircleoutlined.svg"
+                alt="PlusCircleOutlined"
+              />
+            </div>
+            <div
+              class="disclaimer-VfyIAa valign-text-middle inter-semi-bold-white-32px"
+              data-id="24:314"
+            >
+              DISCLAIMER
+            </div>
+            <div class="frame-1707482714-VfyIAa" data-id="24:268">
+              <img
+                class="exclamation-circle-outlined"
+                data-id="24:269"
+                src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/exclamationcircleoutlined.svg"
+                anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/exclamationcircleoutlined.svg"
+                alt="ExclamationCircleOutlined"
+              />
+              <div
+                class="recent-deposits valign-text-middle inter-semi-bold-white-32px"
+                data-id="24:271"
+              >
+                Recent Deposits
+              </div>
+            </div>
+            <div
+              class="transactions-VfyIAa inter-black-white-32px"
+              data-id="24:260"
+            >
+              TRANSACTIONS
+            </div>
+          </div>
+          <div class="frame-1707482728-Ys8k0x" data-id="26:348">
+            <div class="ellipse-8-nsJ61z ellipse-8" data-id="26:343"></div>
+            <img
+              class="line-9-nsJ61z line-9"
+              data-id="26:342"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-3.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/line-9-3.svg"
+              alt="Line 9"
+            />
+            <p
+              class="in-nature-stacking-is-very-common-nsJ61z valign-text-middle inter-light-white-15px"
+              data-id="26:341"
+            >
+              In nature, stacking is very common,
+            </p>
+            <div
+              class="frame-1707482690-nsJ61z frame-1707482690"
+              data-id="26:334"
+            >
+              <div
+                class="home-page valign-text-middle inter-semi-bold-white-15px"
+                data-id="26:335"
+              >
+                Home page
+              </div>
+              <div
+                class="download valign-text-middle inter-semi-bold-white-15px"
+                data-id="26:336"
+              >
+                Download
+              </div>
+              <div
+                class="message valign-text-middle inter-semi-bold-white-15px"
+                data-id="26:337"
+              >
+                message
+              </div>
+              <div
+                class="help valign-text-middle inter-semi-bold-white-15px"
+                data-id="26:338"
+              >
+                help
+              </div>
+              <div
+                class="join-us valign-text-middle inter-semi-bold-white-15px"
+                data-id="26:339"
+              >
+                Join us
+              </div>
+              <div
+                class="joiasan-us valign-text-middle inter-semi-bold-white-15px"
+                data-id="26:340"
+              >
+                Joiasan us
+              </div>
+            </div>
+            <div
+              class="we-accpst-nsJ61z valign-text-middle inter-light-white-15px"
+              data-id="26:333"
+            >
+              WE&nbsp;&nbsp;ACCPST
+            </div>
+            <div class="frame-1707482727-nsJ61z" data-id="26:320">
+              <div class="ellipse-19-fESy8U" data-id="26:318"></div>
+              <div class="ellipse-20-fESy8U" data-id="26:321"></div>
+              <div class="ellipse-21-fESy8U" data-id="26:322"></div>
+              <div class="ellipse-22-fESy8U" data-id="26:323"></div>
+              <div class="ellipse-23-fESy8U" data-id="26:324"></div>
+              <div class="ellipse-24-fESy8U" data-id="26:325"></div>
+              <div
+                class="p-fESy8U valign-text-middle inter-bold-white-36px"
+                data-id="26:327"
+              >
+                P
+              </div>
+              <div class="e-fESy8U valign-text-middle" data-id="26:328">E</div>
+              <div class="b-fESy8U valign-text-middle b" data-id="26:329">
+                B
+              </div>
+              <div class="d-fESy8U valign-text-middle" data-id="26:330">D</div>
+              <div
+                class="f-fESy8U valign-text-middle inter-bold-white-36px"
+                data-id="26:331"
+              >
+                F
+              </div>
+              <div
+                class="l-fESy8U valign-text-middle inter-bold-white-36px"
+                data-id="26:332"
+              >
+                L
+              </div>
+            </div>
+            <img
+              class="send-outlined-nsJ61z"
+              data-id="26:344"
+              src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/sendoutlined.svg"
+              anima-src="https://cdn.animaapp.com/projects/664c7a95e5fc3b794779cefa/releases/664c7ab46f92eac795225f76/img/sendoutlined.svg"
+              alt="SendOutlined"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div id="anima-interface" data-turbo-permanent="true" class="idle">
+        <!---->
+        <div
+          id="anima-comment-popover"
+          class="popover top"
+          role="tooltip"
+          style="left: -205px; top: -220px"
+        >
+          <div class="arrow" style="margin-left: 128px"></div>
+          <div class="popover-content" style="align-items: center">
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                padding: 20px;
+              "
+            >
+              <h3
+                style="
+                  font-size: 18px;
+                  margin-bottom: 10px;
+                  font-weight: 500;
+                  line-height: 26px;
+                  font-family: Roslindale;
+                "
+              >
+                Leave feedback and collaborate
+              </h3>
+              <p
+                style="
+                  font-size: 12px;
+                  margin-bottom: 20px;
+                  font-weight: 400;
+                  line-height: 20px;
+                "
+              >
+                Login to your account to leave comments. Don't have an account?
+                Sign up for free!
+              </p>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn"
+                href="https://projects.animaapp.com/p/undefined/s/undefined?mode=comments&amp;utm_campaign=add-comment&amp;utm_medium=add-comment&amp;utm_source=animaapp.io"
+                >Add comment</a
+              >
+            </div>
+
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding-right: 20px;
+              "
+            >
+              <img
+                src="https://animaapp.s3.amazonaws.com/static/comment-illustration.svg"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          id="anima-code-popover"
+          class="popover top"
+          role="tooltip"
+          style="left: -205px; top: -220px"
+        >
+          <div class="arrow" style="margin-left: 168px"></div>
+          <div class="popover-content" style="align-items: center">
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                padding: 20px;
+              "
+            >
+              <h3
+                style="
+                  font-size: 18px;
+                  margin-bottom: 10px;
+                  font-weight: 500;
+                  line-height: 26px;
+                  font-family: Roslindale;
+                "
+              >
+                Get clean code you’ll love with Anima
+              </h3>
+              <p
+                style="
+                  font-size: 12px;
+                  margin-bottom: 20px;
+                  font-weight: 400;
+                  line-height: 20px;
+                "
+              >
+                Login and easily export HTML, React or Vue of this prototype.
+                Don’t have an account? Sign up for free!
+              </p>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn"
+                href="https://projects.animaapp.com/p/undefined/s/undefined?mode=code&amp;utm_campaign=get-code&amp;utm_medium=get-code&amp;utm_source=animaapp.io"
+              >
+                Get code
+              </a>
+            </div>
+
+            <img
+              src="https://animaapp.s3.amazonaws.com/static/code-illustration.svg"
+            />
+          </div>
+        </div>
+        <div class="omniview-anima-action-links" id="actions-wrap">
+          <div class="omniview-anima-action-links">
+            <div id="page-nav" class="link navigation" style="display: none">
+              <svg
+                id="homepage-icon"
+                class="home-icon"
+                width="24"
+                height="24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8.151 11a.25.25 0 01-.167-.436l4.349-3.913a.25.25 0 01.334 0l4.349 3.913a.25.25 0 01-.167.436H8.15zM16 12H9v4a1 1 0 001 1h5a1 1 0 001-1v-4z"
+                  fill="#fff"
+                ></path>
+              </svg>
+
+              <svg
+                class="icon"
+                id="arrow-left"
+                width="24"
+                height="24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15 18l-6-6 6-6"
+                  stroke="#fff"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+
+              <span id="page-num"></span>
+
+              <svg
+                class="icon"
+                id="arrow-right"
+                width="24"
+                height="24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9 6l6 6-6 6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </div>
+
+            <a
+              class="link"
+              id="comment-link"
+              target="_blank"
+              style="display: none"
+            >
+              <span class="text">Comment</span>
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M4.301 15.137a.551.551 0 01.199-.55c.314-.23.554-.554.718-.965A6.015 6.015 0 014 10 6.006 6.006 0   0110.001 4 6.006 6.006 0 0116 10.001 6.006 6.006 0 019.999 16a5.98 5.98 0 01-3.095-.86 3.165 3.165 0 01-1.65.438 3.6  3.6 0 01-.57-.044c-.191-.03-.34-.186-.383-.397z"
+                  fill="#fff"
+                ></path>
+              </svg>
+            </a>
+
+            <a
+              class="link"
+              id="code-link"
+              target="_blank"
+              style="display: none"
+            >
+              <span class="text">Get Code</span>
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 15.667a1 1 0 01-.707-1.708l3.626-3.625-3.626-3.626a1 1 0 111.415-1.415l4.333 4.333a1 1 0 010 1.414l-4.333 4.333a.993.993 0 01-.707.294zM7.333 5a1 1 0 01.707 1.708l-3.626 3.625 3.627 3.626a1 1 0 11-1.415 1.415L2.293 11.04a1 1 0 010-1.415l4.333-4.333A.992.992 0 017.333 5z"
+                  fill="#fff"
+                ></path>
+              </svg>
+            </a>
+
+            <div class="restart" id="restart-btn" style="display: none">
+              <svg
+                style="margin-right: 6px"
+                width="12"
+                height="12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6 11.817A5.017 5.017 0 01.994 6.811c0-.207.169-.375.375-.375s.375.168.375.375A4.265 4.265 0 006 11.067a4.265 4.265 0 004.256-4.256A4.265 4.265 0 006 2.555a.376.376 0 01-.375-.376c0-.206.169-.374.375-.374a5.017 5.017 0 015.006 5.006A5.017 5.017 0 016 11.817z"
+                  fill="#fff"
+                ></path>
+                <path
+                  d="M6.75 4.237a.37.37 0 01-.263-.112l-1.65-1.65a.363.363 0 010-.525L6.487.3c.15-.15.375-.15.525 0 .15.15.15.375 0 .525L5.625 2.212 7.012 3.6c.15.15.15.375 0 .525-.056.075-.15.112-.262.112z"
+                  fill="#fff"
+                ></path>
+              </svg>
+              Restart
+            </div>
+          </div>
+        </div>
+        <!---->
+      </div>
+      <div id="anima-watermark" style="display: none" class="idle">
+        <!----><a
+          id="anima-watermark-link"
+          target="_blank"
+          href="https://www.animaapp.com?utm_campaign=public-link-banner&amp;utm_medium=public-link-banner&amp;utm_source=animaapp.io"
+          style="right: 20px; left: auto; padding: 6px"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            id="anima-logo-icon"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            data-hotspot-id="hp-0"
+          >
+            <path
+              d="M4.09293 3.00001H16.5327C16.5484 2.99976 16.5638 3.00351 16.5776 3.01092C16.5913 3.01832 16.603 3.02913 16.6114 3.04231C16.6198 3.0555 16.6247 3.07061 16.6256 3.08622C16.6265 3.10182 16.6233 3.1174 16.6165 3.13146C15.5441 5.29706 13.9276 7.14699 11.9253 8.50009C8.69117 10.6822 5.43436 10.9075 4.09389 10.9196C4.08165 10.9198 4.06949 10.9176 4.05811 10.9131C4.04672 10.9086 4.03636 10.9019 4.02761 10.8933C4.01887 10.8848 4.01192 10.8745 4.00718 10.8633C4.00244 10.852 4 10.8399 4 10.8276V3.09198C4 3.07982 4.00241 3.06778 4.00709 3.05656C4.01177 3.04534 4.01863 3.03516 4.02728 3.02661C4.03592 3.01805 4.04617 3.0113 4.05744 3.00673C4.06871 3.00217 4.08077 2.99988 4.09293 3.00001Z"
+              fill="#FF6250"
+            ></path>
+            <path
+              d="M6.77772 17.4446C8.31182 17.4446 9.55545 16.201 9.55545 14.6669C9.55545 13.1328 8.31182 11.8892 6.77772 11.8892C5.24363 11.8892 4 13.1328 4 14.6669C4 16.201 5.24363 17.4446 6.77772 17.4446Z"
+              fill="#FFDF90"
+            ></path>
+            <path
+              d="M12.4559 17.2799C11.6701 16.9799 11.2522 16.1151 11.5185 15.3496L13.6153 9.3656C13.884 8.60003 14.7387 8.22302 15.5245 8.52299C16.3103 8.82344 16.7282 9.68772 16.4619 10.4538L14.365 16.4377C14.0964 17.2033 13.2417 17.5808 12.4559 17.2799Z"
+              fill="#3366FF"
+            ></path>
+          </svg>
+          <span class="text" style="display: none">Made with Anima</span> </a
+        ><!---->
+      </div>
+      <div id="hotspots_wrapper">
+        <div
+          class="hotspot"
+          id="hp-0"
+          style="top: 0px; left: 0px; z-index: -1; opacity: 0"
+        ></div>
+      </div>
+      <div id="t_preload_links"><link href="/desktop-1" rel="prefetch" /></div>
+      <link rel="stylesheet" href="additional.css" />
+      <style>
+        .border-image {
+          border: 3px solid;
+          border-image: linear-gradient(
+              to bottom,
+              rgb(237.0000010728836, 79.00000289082527, 29.000000171363354),
+              rgb(235.0000011920929, 177.0000046491623, 55.00000052154064)
+            )
+            1 !important;
+        }
+        .frame-1707482713-V3rtYt.second {
+          transform: translateX(-103%);
+        }
+        .frame-1707482713-V3rtYt.third {
+          transform: translateX(-206%);
+        }
+        .frame-1707482713-V3rtYt.fourth {
+          transform: translateX(-309%);
+        }
+        .slider-active {
+          border: 3px solid;
+          border-image: linear-gradient(
+              to bottom,
+              rgb(237.0000010728836, 79.00000289082527, 29.000000171363354),
+              rgb(235.0000011920929, 177.0000046491623, 55.00000052154064)
+            )
+            1 !important;
+        }
+        .active-owl-carosal {
+          background-color: white !important;
+        }
+        .slideParent {
+          transition: transform 0.5s ease-in-out;
+        }
+      </style>
+      <script src="script.js"></script>
+      <script>
+        const firstOfferCard = document.querySelector(
+          ".frame-1707482702-Ys8k0x"
+        );
+        const secondOfferCard = document.querySelector(
+          ".frame-1707482703-Ys8k0x"
+        );
+        const thirdOfferCard = document.querySelector(
+          ".frame-1707482704-Ys8k0x"
+        );
+
+        const investmentOffersText = document.querySelector(
+          ".investment-offers-Ys8k0x"
+        );
+        const investmentOfferPara = document.querySelector(
+          "p.people-have-always-b-WYxxqV.valign-text-middle.people-have-always-b.inter-semi-bold-white-15px"
+        );
+        const investmentOfferDescription = document.querySelector(
+          "p.people-have-always-b-InqUpZ.valign-text-middle.people-have-always-b.inter-semi-bold-white-15px"
+        );
+        const firstCarousalButton =
+          document.querySelector(".ellipse-14-tLWxGC");
+        const secondCarousalButton =
+          document.querySelector(".ellipse-11-tLWxGC");
+        const thirdCarousalButton =
+          document.querySelector(".ellipse-12-tLWxGC");
+        const fourthCarousalButton =
+          document.querySelector(".ellipse-13-tLWxGC");
+
+        const carouselButtons = document.querySelectorAll(
+          ".ellipse-tLWxGC-wajahat"
+        );
+        const slideParent = document.querySelector(".slideParent");
+        const allSlideCards = document.querySelectorAll(".wajahat-slide-card");
+        const slideWidth = allSlideCards[0].offsetWidth;
+        carouselButtons[0].classList.add("active-owl-carosal");
+        carouselButtons.forEach((button, index) => {
+          button.addEventListener("click", () => {
+            const translateX = index * slideWidth;
+            slideParent.style.transform = `translateX(${translateX}px)`;
+            allSlideCards.forEach((slide) => {
+              slide.classList.remove("slider-active");
+            });
+            allSlideCards[index].classList.add("slider-active");
+            carouselButtons.forEach((btn) =>
+              btn.classList.remove("active-owl-carosal")
+            );
+            button.classList.toggle("active-owl-carosal");
+          });
+        });
+        let currentlyActiveCard = null;
+        let numberSliderScrolled = document.querySelector(".x16-uxWwwM");
+
+        firstOfferCard &&
+          firstOfferCard.addEventListener("click", () => {
+            console.log("first is clicked");
+            if (currentlyActiveCard) {
+              currentlyActiveCard.classList.remove("border-image");
+            }
+            firstOfferCard.classList.toggle("border-image");
+            currentlyActiveCard = firstOfferCard;
+            investmentOffersText.textContent = "Investment Offers 1";
+            investmentOfferPara.textContent =
+              "People have always been closely related to nature";
+            investmentOfferDescription.textContent = `
+      People have always been closely related to nature, and stacking is a
+      natural phenomenon, so people, nature and stacking are connected with
+      each other. So，Stacking is not only the result of the years,but also
+      a kind of common man and nature.
+    `;
+          });
+
+        secondOfferCard &&
+          secondOfferCard.addEventListener("click", () => {
+            console.log("second is clicked");
+            if (currentlyActiveCard) {
+              currentlyActiveCard.classList.remove("border-image");
+            }
+            secondOfferCard.classList.toggle("border-image");
+            currentlyActiveCard = secondOfferCard;
+            investmentOffersText.textContent = "Investment Offers 2";
+            investmentOfferPara.textContent =
+              "in plan 2 People have always been closely related to nature";
+            investmentOfferDescription.textContent = `
+      In plan 2 People have always been closely related to nature, and stacking is a
+      natural phenomenon, so people, nature and stacking are connected with
+      each other. So，Stacking is not only the result of the years,but also
+      a kind of common man and nature.
+    `;
+          });
+
+        thirdOfferCard &&
+          thirdOfferCard.addEventListener("click", () => {
+            console.log("third is clicked");
+            if (currentlyActiveCard) {
+              currentlyActiveCard.classList.remove("border-image");
+            }
+            thirdOfferCard.classList.toggle("border-image");
+            currentlyActiveCard = thirdOfferCard;
+            investmentOffersText.textContent = "Investment Offers 3";
+            investmentOfferPara.textContent =
+              "in plan 3 People have always been closely related to nature";
+            investmentOfferDescription.textContent = `
+      In plan 3 People have always been closely related to nature, and stacking is a
+      natural phenomenon, so people, nature and stacking are connected with
+      each other. So，Stacking is not only the result of the years,but also
+      a kind of common man and nature.
+    `;
+          });
+        const leftArrow = document.querySelector("img.arrow-1-uxWwwM");
+        const rightArrow = document.querySelector("img.arrow-2-uxWwwM");
+        leftArrow.addEventListener("click", () => {
+          const currentIndex = Array.from(carouselButtons).indexOf(
+            document.querySelector(".active-owl-carosal")
+          );
+          const previousIndex = currentIndex - 1;
+          if (previousIndex < 0) {
+            previousIndex = carouselButtons.length - 1;
+          }
+          const translateX = previousIndex * slideWidth;
+          slideParent.style.transform = `translateX(${translateX}px)`;
+          carouselButtons[previousIndex].classList.add("active-owl-carosal");
+          carouselButtons[currentIndex].classList.remove("active-owl-carosal");
+          allSlideCards[previousIndex].classList.add("slider-active");
+          allSlideCards[currentIndex].classList.remove("slider-active");
+          let currentSlide = previousIndex + 1;
+          const totalSlides = carouselButtons.length;
+          numberSliderScrolled.textContent = `${currentSlide}/${totalSlides}`;
+        });
+
+        rightArrow.addEventListener("click", () => {
+          const currentIndex = Array.from(carouselButtons).indexOf(
+            document.querySelector(".active-owl-carosal")
+          );
+          let nextIndex = currentIndex + 1;
+          if (nextIndex >= carouselButtons.length) {
+            nextIndex = 0;
+          }
+          let translateX = nextIndex * slideWidth;
+          slideParent.style.transform = `translateX(${translateX}px)`;
+          carouselButtons[nextIndex].classList.add("active-owl-carosal");
+          carouselButtons[currentIndex].classList.remove("active-owl-carosal");
+          allSlideCards[nextIndex].classList.add("slider-active");
+          allSlideCards[currentIndex].classList.remove("slider-active");
+          let currentSlide = nextIndex + 1;
+          const totalSlides = carouselButtons.length;
+          numberSliderScrolled.textContent = `${currentSlide}/${totalSlides}`;
+        });
+      </script>
+    </div>
+  </body>
+</html>
